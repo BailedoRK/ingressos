@@ -1133,7 +1133,7 @@ async function handleSalesTable(e) {
 }
 
 /* Bootstrap (INICIALIZAÇÃO CORRIGIDA) */
-(function init(){
+document.addEventListener('DOMContentLoaded', function() {
   // Adiciona os binds de login primeiro
   id('btnLogin').addEventListener('click', doLogin);
   id('btnVerify').addEventListener('click', verify2FA);
@@ -1148,7 +1148,7 @@ async function handleSalesTable(e) {
   } else { 
     showLogin(); 
   }
-})();
+});
 
 </script>
 </body>
