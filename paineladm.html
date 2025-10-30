@@ -506,59 +506,51 @@ function randomBase32(len=32){ const b=new Uint8Array(len); crypto.getRandomValu
 function otpauthURL(secret,label,issuer=TOTP_ISSUER){ return `otpauth://totp/${encodeURIComponent(label)}?secret=${secret}&issuer=${encodeURIComponent(issuer)}&algorithm=SHA1&digits=6&period=30`; }
 
 /* ===== Login ===== */
-function showLogin(){ id('login').style.display='block'; id('app').style.display='none'; }
-function showApp(){ id('login').style.display='none'; id('app').style.display='block'; }
-
-function doLogin(){
-  const e=(id('email').value||'').trim().toLowerCase();
-  const p=id('pass').value||'';
-  id('errLogin').style.display='none';
-  if(e===ADMIN_EMAIL && p===ADMIN_PASS){
-    const enabled=localStorage.getItem(TOTP_ENABLED)==='1';
-    const secret=localStorage.getItem(TOTP_SECRET)||'';
-    if(enabled && secret){
-      id('twofa').style.display='block';
-      id('setup').style.display='none';
-    }else{
-      const sec = randomBase32(32);
-      localStorage.setItem(TOTP_SECRET, sec);
-      id('twofa').style.display='none';
-      id('setup').style.display='block';
-      const url=otpauthURL(sec, `${TOTP_ISSUER}:${ADMIN_EMAIL}`);
-      id('totpQR').innerHTML=''; new QRCode(id('totpQR'),{text:url,width:150,height:150,colorDark:'#000',colorLight:'#fff'});
-      id('totpSecret').textContent=sec;
-    }
-  }else{
-    id('errLogin').style.display='block';
-  }
+function showLogin(){ 
+  id('login').style.display='block'; 
+  id('app').style.display='none'; 
+  // Binds de Login (MOVIMOS PARA CÁ)
+  id('btnLogin').addEventListener('click', doLogin);
+  id('btnVerify').addEventListener('click', verify2FA);
+  id('btnConfirmSetup').addEventListener('click', confirmSetup2FA);
+  id('btnCopySecret').addEventListener('click', copySecret);
+  id('btnRegenSecret').addEventListener('click', regenSecret);
+  id('btnBack1').addEventListener('click', ()=>{ id('twofa').style.display='none'; });
+  id('btnBack2').addEventListener('click', ()=>{ id('setup').style.display='none'; });
 }
-async function verify2FA(){
-  const code=(id('totpCode').value||'').trim().padStart(6,'0');
-  const secret=localStorage.getItem(TOTP_SECRET)||'';
-  if(code.length!==6 || !secret){ id('err2').style.display='block'; return; }
-  const cur=await totpNow(secret); const prev=await totpNow(secret); const next=await totpNow(secret);
-  if([cur,prev,next].includes(code)){ localStorage.setItem(ADMIN_FLAG,'1'); enter(); }
-  else{ id('err2').style.display='block'; }
+function showApp(){ 
+  id('login').style.display='none'; 
+  id('app').style.display='block'; 
 }
-async function confirmSetup2FA(){
-  const code=(id('totpSetupCode').value||'').trim().padStart(6,'0');
-  const secret=localStorage.getItem(TOTP_SECRET)||'';
-  if(code.length!==6 || !secret){ id('errSetup').style.display='block'; return; }
-  const cur=await totpNow(secret); const prev=await totpNow(secret); const next=await totpNow(secret);
-  if([cur,prev,next].includes(code)){
-    localStorage.setItem(TOTP_ENABLED,'1');
-    id('errSetup').style.display='none'; id('okSetup').style.display='block';
-    setTimeout(()=>{ localStorage.setItem(ADMIN_FLAG,'1'); enter(); },600);
-  }else{ id('errSetup').style.display='block'; }
-}
-function copySecret(){ const s=localStorage.getItem(TOTP_SECRET)||''; if(!s) return; navigator.clipboard?.writeText(s).then(()=>toast('Segredo copiado!')); }
-function regenSecret(){ const s=randomBase32(32); localStorage.setItem(TOTP_SECRET,s); id('totpSecret').textContent=s; id('totpQR').innerHTML=''; new QRCode(id('totpQR'),{text:otpauthURL(s,`${TOTP_ISSUER}:${ADMIN_EMAIL}`),width:150,height:150,colorDark:'#000',colorLight:'#fff'}); toast('Novo segredo gerado.'); }
 
 async function enter(){ 
   showApp(); 
   await renderAll(); 
   toast('Login realizado.');
   checkConfig(); 
+  
+  // Binds do App (MOVIMOS PARA CÁ)
+  id('btnLogout').addEventListener('click', logout);
+  id('btnSaveAppearance').addEventListener('click', saveAppearance);
+  id('btnSaveTexts').addEventListener('click', saveTexts);
+  id('btnSavePayment').addEventListener('click', savePayment);
+  id('btnSavePrices').addEventListener('click', savePrices);
+  id('btnSaveCss').addEventListener('click', saveCss);
+  id('btnAddCoupon').addEventListener('click', addCoupon);
+  id('cpTable').addEventListener('click', handleCouponTable);
+  id('btnExport').addEventListener('click', exportConfig);
+  id('fileImport').addEventListener('change', importConfig);
+  id('btnReset').addEventListener('click', resetConfig);
+  id('filterInput').addEventListener('input', filterSalesTable);
+  id('filterPromotora').addEventListener('change', filterSalesTable);
+  id('btnRefreshSales').addEventListener('click', refreshAllData);
+  id('btnExportFullCsv').addEventListener('click', exportFullCSV);
+  id('btnClearSales').addEventListener('click', clearSales);
+  id('salesTable').addEventListener('click', handleSalesTable);
+  id('btnCloseDetails').addEventListener('click', hideDetailsModal);
+  id('detailsBackdrop').addEventListener('click', e => {
+    if (e.target === id('detailsBackdrop')) hideDetailsModal();
+  });
 }
 function logout(){ localStorage.removeItem(ADMIN_FLAG); showLogin(); toast('Sessão encerrada.'); }
 
@@ -944,7 +936,7 @@ async function renderAll(){
   renderCoupons(cfg); 
   renderAdvanced(cfg); 
   renderPromotorasAdmin(cfg);
-  bindPromotorasAdmin(cfg); // Re-bind
+  bindPromotorasAdmin(); // Re-bind
   
   // Renderiza os relatórios
   renderDashboard();
@@ -954,7 +946,7 @@ async function renderAll(){
 }
 
 /* ===== Saves (ATUALIZADO) ===== */
-id('btnSaveAppearance').addEventListener('click', async ()=>{ 
+async function saveAppearance(){ 
   const cfg = { ...localConfig }; // Pega do cache
   cfg.theme.primary = id('thPrimary').value||DEFAULT_CFG.theme.primary; 
   cfg.theme.secondary = id('thSecondary').value||DEFAULT_CFG.theme.secondary; 
@@ -962,8 +954,8 @@ id('btnSaveAppearance').addEventListener('click', async ()=>{
   cfg.theme.radius = Number(id('thRadius').value||DEFAULT_CFG.theme.radius); 
   cfg.theme.fabImage = id('thFabImage').value||'';
   await saveCfg(cfg); 
-});
-id('btnSaveTexts').addEventListener('click', async ()=>{ 
+}
+async function saveTexts(){ 
   const cfg = { ...localConfig }; 
   cfg.texts.heroTitle=id('txHeroTitle').value||DEFAULT_CFG.texts.heroTitle; 
   cfg.texts.heroSubtitle=id('txHeroSubtitle').value||DEFAULT_CFG.texts.heroSubtitle; 
@@ -974,8 +966,8 @@ id('btnSaveTexts').addEventListener('click', async ()=>{
   cfg.texts.thanksTitle=id('txThanksTitle').value||DEFAULT_CFG.texts.thanksTitle; 
   cfg.texts.thanksText=id('txThanksText').value||DEFAULT_CFG.texts.thanksText; 
   await saveCfg(cfg); 
-});
-id('btnSavePayment').addEventListener('click', async ()=>{ 
+}
+async function savePayment(){ 
   const cfg = { ...localConfig }; 
   cfg.payment.pixKey=id('pgPixKey').value||''; 
   cfg.payment.merchant=(id('pgMerchant').value||'').toUpperCase().slice(0,25); 
@@ -984,21 +976,21 @@ id('btnSavePayment').addEventListener('click', async ()=>{
   cfg.payment.instagram=id('pgInsta').value||DEFAULT_CFG.payment.instagram; 
   await saveCfg(cfg);
   checkConfig(); // Re-checa a config após salvar
-});
-id('btnSavePrices').addEventListener('click', async ()=>{ 
+}
+async function savePrices(){ 
   const cfg = { ...localConfig }; 
   cfg.prices.M=Number(id('prBaseM').value||DEFAULT_CFG.prices.M); 
   cfg.prices.F=Number(id('prBaseF').value||DEFAULT_CFG.prices.F); 
   await saveCfg(cfg); 
-});
-id('btnSaveCss').addEventListener('click', async ()=>{ 
+}
+async function saveCss(){ 
   const cfg = { ...localConfig }; 
   cfg.customCSS = id('advCss').value||''; 
   await saveCfg(cfg); 
-});
+}
 
 /* Coupons CRUD */
-id('btnAddCoupon').addEventListener('click', async ()=>{
+async function addCoupon(){
   const code=(id('cpCode').value||'').trim(); const m=Number(id('cpM').value||0); const f=Number(id('cpF').value||0);
   if(!code){ toast('Informe o código.'); return; }
   if(m<=0 || f<=0){ toast('Preços do cupom devem ser > 0.'); return; }
@@ -1014,8 +1006,8 @@ id('btnAddCoupon').addEventListener('click', async ()=>{
   renderCoupons(cfg); 
   toast('Cupom salvo.');
   id('cpCode').value = ''; id('cpM').value = ''; id('cpF').value = '';
-});
-id('cpTable').addEventListener('click', async (e)=>{
+}
+async function handleCouponTable(e){
   const act=e.target?.dataset?.act; if(!act) return;
   const idx=Number(e.target.dataset.idx);
   
@@ -1041,14 +1033,14 @@ id('cpTable').addEventListener('click', async (e)=>{
     await saveCfg(cfg); 
     renderCoupons(cfg); 
   }
-});
+}
 
 /* Export / Import / Reset */
-id('btnExport').addEventListener('click',()=>{
+function exportConfig(){
   const cfg = localConfig;
   const blob=new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='config-bilhetes.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-});
-id('fileImport').addEventListener('change',(e)=>{
+}
+function importConfig(e){
   const f=e.target.files?.[0]; if(!f) return;
   const r=new FileReader();
   r.onload= async ()=>{ 
@@ -1062,24 +1054,14 @@ id('fileImport').addEventListener('change',(e)=>{
     } 
   };
   r.readAsText(f);
-});
-id('btnReset').addEventListener('click', async ()=>{ 
+}
+async function resetConfig(){ 
   if(confirm('Resetar para padrão? Isso salvará a configuração padrão na nuvem.')){ 
     await saveCfg(DEFAULT_CFG); 
     await renderAll(); 
     toast('Padrão restaurado.'); 
   }
-});
-
-/* Login binds */
-id('btnLogin').addEventListener('click', doLogin);
-id('btnVerify').addEventListener('click', verify2FA);
-id('btnConfirmSetup').addEventListener('click', confirmSetup2FA);
-id('btnCopySecret').addEventListener('click', copySecret);
-id('btnRegenSecret').addEventListener('click', regenSecret);
-id('btnBack1').addEventListener('click', ()=>{ id('twofa').style.display='none'; });
-id('btnBack2').addEventListener('click', ()=>{ id('setup').style.display='none'; });
-id('btnLogout').addEventListener('click', logout);
+}
 
 /* Binds do Relatório de Vendas */
 async function refreshAllData() {
@@ -1090,14 +1072,7 @@ async function refreshAllData() {
   renderReport();
   toast('Dados atualizados!');
 }
-
-id('filterInput').addEventListener('input', filterSalesTable);
-id('filterPromotora').addEventListener('change', filterSalesTable);
-id('btnRefreshSales').addEventListener('click', refreshAllData);
-id('btnExportFullCsv').addEventListener('click', exportFullCSV);
-id('btnClearSales').addEventListener('click', clearSales);
-// Binds do Modal
-id('salesTable').addEventListener('click', async e => {
+async function handleSalesTable(e) {
   const btn = e.target.closest('button');
   if (!btn) return;
   
@@ -1113,16 +1088,24 @@ id('salesTable').addEventListener('click', async e => {
     await updateSaleStatus(saleId, newStatus);
     await refreshAllData(); // Recarrega tudo
   }
-});
-id('btnCloseDetails').addEventListener('click', hideDetailsModal);
-id('detailsBackdrop').addEventListener('click', e => {
-  if (e.target === id('detailsBackdrop')) hideDetailsModal();
-});
-
+}
 
 /* Bootstrap */
 (function init(){
-  if(localStorage.getItem(ADMIN_FLAG)==='1'){ enter(); } else { showLogin(); }
+  // Binds de Login (MOVIMOS PARA CÁ)
+  id('btnLogin').addEventListener('click', doLogin);
+  id('btnVerify').addEventListener('click', verify2FA);
+  id('btnConfirmSetup').addEventListener('click', confirmSetup2FA);
+  id('btnCopySecret').addEventListener('click', copySecret);
+  id('btnRegenSecret').addEventListener('click', regenSecret);
+  id('btnBack1').addEventListener('click', ()=>{ id('twofa').style.display='none'; });
+  id('btnBack2').addEventListener('click', ()=>{ id('setup').style.display='none'; });
+  
+  if(localStorage.getItem(ADMIN_FLAG)==='1'){ 
+    enter(); 
+  } else { 
+    showLogin(); 
+  }
 })();
 
 </script>
