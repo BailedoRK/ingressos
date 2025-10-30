@@ -115,7 +115,7 @@
   <header>
     <h1>Painel de Controle – Bilheteria</h1>
     <div class="row">
-      <a class="btn ghost" href="./index_promotoras.html" target="_blank" rel="noopener">Abrir site</a>
+      <a class="btn ghost" href="./index.html" target="_blank" rel="noopener">Abrir site</a>
       <button id="btnLogout" class="btn secondary">Sair</button>
     </div>
   </header>
@@ -123,7 +123,7 @@
   <div class="card">
   
     <div id="config-alert">
-      <strong>Atenção!</strong> Para o PIX funcionar, você <strong>precisa</strong> preencher seus dados reais na aba "💳 Pagamento".
+      <strong>Atenção!</strong> Para o PIX funcionar, você <strong>precisa</strong> preencher seus dados reais na aba "💳 Config. Pagamento".
     </div>
   
     <div class="tabs">
@@ -341,14 +341,14 @@ const TOTP_ISSUER='Baile do RK';
 const CFG_KEY='rk_site_cfg_v1'; // Chave principal de configuração
 const SALES_KEY = 'rk_bilhetes_vendas_v1'; // Chave para os registros de vendas
 
-/* ===== Config padrão (mesma do index) ===== */
+/* ===== Config padrão (ATUALIZADA) ===== */
 const DEFAULT_CFG = {
   theme:{ 
     primary:'#7c5cff', 
     secondary:'#3ca6ff', 
     tertiary: '#ff6b6b',
     radius:14,
-    fabImage: '' // O usuário DEVE preencher
+    fabImage: 'https://bailedork.github.io/ingressos/logo-baile.jpg.jpeg' // <-- LOGO ATUALIZADA
   },
   texts:{
     heroTitle:'Bilheteria Online',
@@ -361,9 +361,9 @@ const DEFAULT_CFG = {
     thanksText:'Recebemos sua confirmação. Agora é só <strong>enviar o comprovante</strong> no WhatsApp (já abrimos em outra guia para você). Assim que validarmos, você será adicionado ao <strong>grupo exclusivo dos compradores</strong>, onde divulgaremos a <strong>localização e todas as informações oficiais</strong> do evento.'
   },
   payment:{ 
-    pixKey:'', // FORÇA O USUÁRIO A PREENCHER
-    merchant:'', // FORÇA O USUÁRIO A PREENCHER
-    city:'', // FORÇA O USUÁRIO A PREENCHER
+    pixKey: 'bailedork2025@gmail.com', // <-- SEU DADO CORRIGIDO
+    merchant: 'RICARDO WILLYSMAR PEREIRA', // <-- SEU DADO CORRIGIDO (25 Chars)
+    city: 'RECIFE', // <-- SEU DADO CORRIGIDO
     whatsapp:'+5581991405977',
     instagram: 'https://instagram.com/bailedork'
   },

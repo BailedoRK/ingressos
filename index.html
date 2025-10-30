@@ -503,7 +503,7 @@
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
-/* ===== CONFIG PADRÃO (fallback) ===== */
+/* ===== CONFIG PADRÃO (ATUALIZADA) ===== */
 const CFG_KEY='rk_site_cfg_v1';
 const SALES_KEY = 'rk_bilhetes_vendas_v1';
 
@@ -511,9 +511,9 @@ const DEFAULT_CFG = {
   theme:{ 
     primary:'#7c5cff', 
     secondary:'#3ca6ff', 
-    tertiary: '#ff6b6b', /* Cor extra (Surpresa) */
+    tertiary: '#ff6b6b',
     radius:14,
-    fabImage: '' /* Placeholder - Trocar pela URL da logo */
+    fabImage: 'https://bailedork.github.io/ingressos/logo-baile.jpg.jpeg' // <-- LOGO ATUALIZADA
   },
   texts:{
     heroTitle:'Bilheteria Online',
@@ -526,9 +526,9 @@ const DEFAULT_CFG = {
     thanksText:'Recebemos sua confirmação. Agora é só <strong>enviar o comprovante</strong> no WhatsApp (já abrimos em outra guia para você). Assim que validarmos, você será adicionado ao <strong>grupo exclusivo dos compradores</strong>, onde divulgaremos a <strong>localização e todas as informações oficiais</strong> do evento.'
   },
   payment:{ 
-    pixKey:'', 
-    merchant:'', 
-    city:'', 
+    pixKey: 'bailedork2025@gmail.com', // <-- SEU DADO CORRIGIDO
+    merchant: 'RICARDO WILLYSMAR PEREIRA', // <-- SEU DADO CORRIGIDO (25 Chars)
+    city: 'RECIFE', // <-- SEU DADO CORRIGIDO
     whatsapp:'+5581991405977',
     instagram: 'https://instagram.com/bailedork'
   },
@@ -542,7 +542,19 @@ const DEFAULT_CFG = {
 };
 
 /* ===== Carregador de Configuração ===== */
-function loadCfg(){ try{ return Object.assign({}, DEFAULT_CFG, JSON.parse(localStorage.getItem(CFG_KEY)||'{}')); }catch(e){ return JSON.parse(JSON.stringify(DEFAULT_CFG)); } }
+function loadCfg(){ 
+  let cfg = {};
+  try{ cfg = JSON.parse(localStorage.getItem(CFG_KEY)||'{}'); } catch(e){}
+  // Merge profundo para garantir que todas as chaves existam
+  return {
+    ...DEFAULT_CFG,
+    ...cfg,
+    theme: { ...DEFAULT_CFG.theme, ...cfg.theme },
+    texts: { ...DEFAULT_CFG.texts, ...cfg.texts },
+    payment: { ...DEFAULT_CFG.payment, ...cfg.payment },
+    prices: { ...DEFAULT_CFG.prices, ...cfg.prices },
+  };
+}
 
 // Variáveis globais de configuração
 let CONFIG = loadCfg();
@@ -923,7 +935,7 @@ function enviarWhats(){
     genero: formData.genero,
     ingressoParaMim: formData.ingressoParaMim,
     instagram: formData.instagramUser,
-    companions: companions,
+    companions: companions, // <-- SALVA ACOMPANHANTES
     status: 'pending' // NOVO: Status de pagamento
   });
 
