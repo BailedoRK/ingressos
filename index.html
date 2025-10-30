@@ -287,6 +287,9 @@
   }
 </style>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
@@ -503,10 +506,24 @@
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
-/* ===== CONFIG PADRÃO (ATUALIZADA) ===== */
-const CFG_KEY='rk_site_cfg_v1';
-const SALES_KEY = 'rk_bilhetes_vendas_v1';
+/* ===== Config Firebase (ATUALIZADO) ===== */
+const firebaseConfig = {
+  apiKey: "AIzaSyDbblpUh93x0CUOquVCt_fqPjDoE8515Ao",
+  authDomain: "bilheteria-rk.firebaseapp.com",
+  projectId: "bilheteria-rk",
+  storageBucket: "bilheteria-rk.firebasestorage.app",
+  messagingSenderId: "853871836419",
+  appId: "1:853871836419:web:0cf543e0f511aa92a8bd36"
+};
 
+// Inicializa Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const configRef = db.collection('config').doc('site');
+const salesRef = db.collection('sales');
+
+/* ===== Config Padrão (Fallback) ===== */
+// Usado apenas se o Firebase estiver offline ou vazio
 const DEFAULT_CFG = {
   theme:{ 
     primary:'#7c5cff', 
@@ -514,16 +531,6 @@ const DEFAULT_CFG = {
     tertiary: '#ff6b6b',
     radius:14,
     fabImage: 'https://bailedork.github.io/ingressos/logo-baile.jpg.jpeg' // <-- LOGO ATUALIZADA
-  },
-  texts:{
-    heroTitle:'Bilheteria Online',
-    heroSubtitle:'Baile do RK',
-    pageTitle:'Finalize seu ingresso com Pix em segundos',
-    pageSubtitle:'Wizard de 4 etapas • QR Pix com valor automático • Mensagem do WhatsApp com todos os nomes.',
-    noticeImportant:'<strong>Importante:</strong><br>• <strong>Não haverá devolução de valor.</strong> Só compre o ingresso se tiver total certeza de que vai comparecer ao evento.<br>• A <strong>localização e demais informações</strong> serão divulgadas no <strong>grupo exclusivo dos compradores</strong> após a confirmação do pagamento.',
-    noticePayment:'<strong>Importante:</strong><br>• <strong>Não haverá devolução de valor.</strong><br>• A <strong>localização e informações oficiais</strong> serão divulgadas apenas no <strong>grupo exclusivo dos compradores</strong> após a confirmação do pagamento.',
-    thanksTitle:'🎉 Obrigado pela compra!',
-    thanksText:'Recebemos sua confirmação. Agora é só <strong>enviar o comprovante</strong> no WhatsApp (já abrimos em outra guia para você). Assim que validarmos, você será adicionado ao <strong>grupo exclusivo dos compradores</strong>, onde divulgaremos a <strong>localização e todas as informações oficiais</strong> do evento.'
   },
   payment:{ 
     pixKey: 'bailedork2025@gmail.com', // <-- SEU DADO CORRIGIDO
@@ -533,35 +540,40 @@ const DEFAULT_CFG = {
     instagram: 'https://instagram.com/bailedork'
   },
   prices:{ M:25, F:15 },
-  coupons:[ { code:'PRIMEIRO LOTE', M:20, F:10, active:true } ],
-  promotoras: [
-    "Larissa / Lari","Samara / Mara","Yasmim / Paris","Isa","Adriane / Drih",
-    "Ketlyn / Keu","Kaylane / Kayh","Yasmim Lima","Vivian","Bianca"
+  coupons:[ 
+    { code:'PRIMEIRO LOTE', M:20, F:10, active:true },
+    { code:'testerk', M:0.01, F:0.01, active:true },
+    { code:'TESTE RK', M:0.01, F:0.01, active:true }
   ],
-  customCSS:''
 };
 
-/* ===== Carregador de Configuração ===== */
-function loadCfg(){ 
-  let cfg = {};
-  try{ cfg = JSON.parse(localStorage.getItem(CFG_KEY)||'{}'); } catch(e){}
-  // Merge profundo para garantir que todas as chaves existam
-  return {
-    ...DEFAULT_CFG,
-    ...cfg,
-    theme: { ...DEFAULT_CFG.theme, ...cfg.theme },
-    texts: { ...DEFAULT_CFG.texts, ...cfg.texts },
-    payment: { ...DEFAULT_CFG.payment, ...cfg.payment },
-    prices: { ...DEFAULT_CFG.prices, ...cfg.prices },
-  };
-}
 
-// Variáveis globais de configuração
-let CONFIG = loadCfg();
+/* ===== Carregador de Configuração (NOVO) ===== */
+let CONFIG = DEFAULT_CFG; // Começa com o padrão
 let PIX_KEY    = CONFIG.payment.pixKey;
 let MERCHANT   = CONFIG.payment.merchant;
 let CITY       = CONFIG.payment.city;
 let WHATS_DEST = CONFIG.payment.whatsapp;
+
+async function fetchConfig() {
+  try {
+    const doc = await configRef.get();
+    if (doc.exists) {
+      CONFIG = doc.data(); // Sobrescreve o padrão com os dados da nuvem
+      // Atualiza variáveis globais de pagamento
+      PIX_KEY    = CONFIG.payment.pixKey;
+      MERCHANT   = CONFIG.payment.merchant;
+      CITY       = CONFIG.payment.city;
+      WHATS_DEST = CONFIG.payment.whatsapp;
+    } else {
+      console.warn("Documento de configuração não encontrado no Firebase. Usando padrão.");
+    }
+  } catch(err) {
+    console.error("Erro ao buscar config do Firebase. Usando padrão.", err);
+    toast("Erro ao carregar configurações. Tente recarregar.");
+  }
+}
+
 
 /* ===== Utils ===== */
 const BRL = n => (n || 0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
@@ -908,13 +920,8 @@ function confirmarPagamento(){
   startModalProgress(5000); 
 }
 
-/* ===== Vendas (localStorage) ===== */
-const loadSales=()=>{try{return JSON.parse(localStorage.getItem(SALES_KEY)||'[]')}catch(e){return[]}};
-const saveSales=arr=>localStorage.setItem(SALES_KEY,JSON.stringify(arr));
-const addSale=rec=>{const a=loadSales(); a.push(rec); saveSales(a);};
-
-/* WhatsApp com acompanhantes + avançar para Etapa 5 (Obrigado) */
-function enviarWhats(){
+/* ===== Vendas (Firebase) ===== */
+async function enviarWhats(){
   if(id('btnWhats').disabled) return;
   const p = computeTotal();
   const companions = collectCompanions();
@@ -923,21 +930,27 @@ function enviarWhats(){
     ? ['Acompanhantes:'].concat(companions.map((c,i)=>`• ${c.gender} #${i+1}: ${c.name} — +55 ${c.whats}`)) 
     : ['Acompanhantes: (nenhum)'];
 
-  // Salva a venda (ATUALIZADO PARA INCLUIR COMPANIONS e STATUS)
-  addSale({
-    ts: new Date().toISOString(), 
-    nome: formData.nome, 
-    whats: formData.whats, 
-    qM: p.qM, 
-    qF: p.qF, 
-    total: p.total, 
-    promotora: formData.promotora, 
-    genero: formData.genero,
-    ingressoParaMim: formData.ingressoParaMim,
-    instagram: formData.instagramUser,
-    companions: companions, // <-- SALVA ACOMPANHANTES
-    status: 'pending' // NOVO: Status de pagamento
-  });
+  // Salva a venda no Firebase
+  try {
+    await salesRef.add({
+      ts: firebase.firestore.FieldValue.serverTimestamp(), // Usa a hora do servidor
+      nome: formData.nome, 
+      whats: formData.whats, 
+      qM: p.qM, 
+      qF: p.qF, 
+      total: p.total, 
+      promotora: formData.promotora, 
+      genero: formData.genero,
+      ingressoParaMim: formData.ingressoParaMim,
+      instagram: formData.instagramUser,
+      companions: companions,
+      status: 'pending' // Status inicial
+    });
+  } catch (err) {
+    console.error("Erro ao salvar venda: ", err);
+    alert("Houve um erro ao salvar sua venda. Tente novamente.");
+    return;
+  }
 
   const msg=[
     'Comprovante – Bilheteria Online – Baile do RK','--------------------------------',
@@ -1160,11 +1173,16 @@ id('btnPaid').addEventListener('click', confirmarPagamento);
 id('btnWhats').addEventListener('click', enviarWhats);
 
 /* ===== INICIALIZAÇÃO ===== */
-applyConfig(CONFIG);
-resetPrices(); // Garante que os preços base sejam carregados
-updatePhoneHint(); 
-setStep(1);
-createConfetti(); // Inicia a animação
+(async function init() {
+  toast('Carregando bilheteria...');
+  await fetchConfig(); // Busca as configs da nuvem
+  applyConfig(CONFIG); // Aplica as configs
+  resetPrices(); // Garante que os preços base sejam carregados
+  updatePhoneHint(); 
+  setStep(1);
+  createConfetti(); // Inicia a animação
+  toast('Pronto!');
+})();
 
 </script>
 </body>

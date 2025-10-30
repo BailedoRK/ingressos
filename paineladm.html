@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ADM – Bilheteria Online</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0e0f13;--panel:#16181f;--soft:#1a1e29;--text:#e9edf1;--muted:#9aa5b1;--accent:#7c5cff;--blue:#3ca6ff; --danger: #aa2e3f; --danger-soft: #5a202a; --ok-soft: #0d1a10; --ok-border: #375b2a;}
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0;font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;background:linear-gradient(180deg,#0d0f14 0,#0e0f13 100%);color:var(--text)}
+  .wrap{max-width:1400px;margin:28px auto;padding:0 16px 56px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+  h1{margin:0;font-size:clamp(20px,3vw,28px);font-weight:800;background:linear-gradient(90deg,var(--accent),#8f85ff,var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .card{background:linear-gradient(180deg,var(--panel),#141720 50%,var(--panel));border:1px solid #222532;border-radius:14px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+  .tab{padding:8px 12px;border-radius:10px;border:1px solid #2a2f3d;background:#1a1f2b;color:#dbe3ff;cursor:pointer;font-weight:600;}
+  .tab.active{background:linear-gradient(135deg,#7c5cff,#4e7dff);border-color:#4e7dff;color:#fff;}
+  .pane{display:none}.pane.active{display:block}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+  @media (max-width:840px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+  label{display:block;font-size:12px;color:#9aa5b1;margin:0 0 6px}
+  input[type=text],input[type=number],input[type=password],select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2a2f3d;background:var(--soft);color:#e9edf1}
+  textarea{min-height:120px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:0;border-radius:10px;background:linear-gradient(135deg,#7c5cff,#4e7dff);color:#fff;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(124,92,255,.35)}
+  .btn.secondary{background:linear-gradient(180deg,#2b3345,#22293a);color:#e6ebff}
+  .btn.danger{background:linear-gradient(180deg,var(--danger),#8f2432)}
+  .btn.ghost{background:linear-gradient(180deg,#242a3a,#1d2333);color:#d9e7ff}
+  .btn.success{background:linear-gradient(180deg,#18c964,#0fb05a)}
+  .btn.small{padding: 6px 10px; font-size: 12px; border-radius: 8px;}
+  .btn:disabled{opacity:.6;cursor:not-allowed;}
+  .muted{color:#9aa5b1;font-size:12px}
+  .table{width:100%;min-width: 1000px; border-collapse:collapse;margin-top:8px}
+  .table th,.table td{border-bottom:1px solid #2a2f3d;padding:10px 12px;text-align:left;font-size:13px;white-space:nowrap;}
+  .table th{background:#151a24;font-size: 11px; text-transform: uppercase; color: var(--muted);}
+  .table-wrap{width:100%;overflow-x:auto;border: 1px solid #2a2f3d; border-radius: 10px; background: #0f1117;}
+  .table tr.hidden { display: none; }
+  .table .no-results td { text-align: center; color: var(--muted); padding: 20px; font-size: 14px; }
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#1e263c;border:1px solid #2b3150;color:#bcd3ff;font-size:12px}
+  .pill.paid { background: var(--ok-soft); border-color: var(--ok-border); color: #b8f3c2; }
+  .pill.cancelled { background: var(--danger-soft); border-color: var(--danger); color: #ffd6df; }
+  
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#1b2130;border:1px solid #2b3244;padding:10px 14px;border-radius:10px;color:#d9e7ff;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #login{max-width:420px;margin:12vh auto;padding:20px}
+  .err{color:#ff6b6b;font-size:12px;display:none;margin-top:6px}
+  .ok{color:#2dd4bf;font-size:12px;display:none;margin-top:6px}
+  /* Stat box */
+  .stat-box { background:#11141b; border: 1px solid #222532; border-radius: 10px; padding: 12px 16px; }
+  .stat-box label { margin: 0; color: var(--muted); }
+  .stat-box h2 { margin: 4px 0 0; font-size: 26px; color: var(--text); }
+  .stat-box h2.pending { color: #f6a800; }
+  
+  /* Filters */
+  .filters-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .actions-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  @media (max-width: 600px) { .filters-bar { grid-template-columns: 1fr; } }
+  
+  /* Modal Detalhes */
+  #detailsBackdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:1000}
+  #detailsModal{width:min(600px,94vw);background:var(--panel);border:1px solid #2a2f3d;border-radius:14px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:pop .2s}
+  #detailsModal h3{margin:0 0 14px;color:var(--text);}
+  #detailsContent{font-size:14px;max-height:60vh;overflow-y:auto;color:var(--muted);}
+  #detailsContent strong{color:var(--text);display:inline-block;width:100px;}
+  #detailsContent div{padding:6px 0;border-bottom:1px solid #222532;}
+  #detailsContent .comp-list h4 { margin: 12px 0 4px; color: var(--accent); }
+  #detailsContent .comp-list div { padding-left: 10px; }
+  @keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+  
+  /* Alerta de Configuração (NOVO) */
+  #config-alert {
+    display: none; /* Oculto por padrão */
+    padding: 12px 16px;
+    background: var(--danger-soft);
+    border: 1px solid var(--danger);
+    color: #ffd6df;
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  #config-alert strong { color: #fff; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+<div id="login" class="card" style="display:none">
+  <h1>Área Administrativa</h1>
+  <p class="muted">Entre com e-mail, senha e 2FA se habilitado.</p>
+  <label>E-mail</label><input id="email" type="text" placeholder="admbilheteria@gmail.com">
+  <label>Senha</label><input id="pass" type="password" placeholder="********">
+  <div class="row" style="margin-top:8px"><button id="btnLogin" class="btn">Entrar</button></div>
+  <div id="errLogin" class="err">E-mail ou senha incorretos.</div>
+  <div id="twofa" style="display:none;margin-top:12px">
+    <label>Código 2FA</label><input id="totpCode" type="number" inputmode="numeric" placeholder="000000">
+    <div class="row" style="margin-top:8px"><button id="btnVerify" class="btn">Verificar</button><button id="btnBack1" class="btn secondary">Voltar</button></div>
+    <div id="err2" class="err">Código inválido.</div>
+  </div>
+  <div id="setup" style="display:none;margin-top:12px">
+    <div class="grid2">
+      <div style="background:#fff;border:1px solid #e6e9f3;border-radius:10px;display:grid;place-items:center;padding:8px"><div id="totpQR"></div></div>
+      <div>
+        <div class="muted">Segredo (Base32):</div>
+        <code id="totpSecret" style="display:inline-block;background:#0f1322;border:1px solid #293056;border-radius:8px;padding:8px;color:#d8e4ff"></code>
+        <div class="row" style="margin-top:8px"><button id="btnCopySecret" class="btn secondary">Copiar segredo</button><button id="btnRegenSecret" class="btn">Gerar outro</button></div>
+      </div>
+    </div>
+    <label style="margin-top:8px">Digite o código 2FA do app</label><input id="totpSetupCode" type="number" inputmode="numeric" placeholder="000000">
+    <div class="row" style="margin-top:8px"><button id="btnConfirmSetup" class="btn">Confirmar 2FA</button><button id="btnBack2" class="btn secondary">Voltar</button></div>
+    <div id="okSetup" class="ok">2FA configurado!</div><div id="errSetup" class="err">Código inválido.</div>
+  </div>
+</div>
+
+<div id="app" class="wrap" style="display:none">
+  <header>
+    <h1>Painel de Controle – Bilheteria</h1>
+    <div class="row">
+      <a class="btn ghost" href="./index.html" target="_blank" rel="noopener">Abrir site</a>
+      <button id="btnLogout" class="btn secondary">Sair</button>
+    </div>
+  </header>
+
+  <div class="card">
+  
+    <div id="config-alert">
+      <strong>Atenção!</strong> Para o PIX funcionar, você <strong>precisa</strong> preencher seus dados reais na aba "💳 Config. Pagamento".
+    </div>
+  
+    <div class="tabs">
+      <button class="tab active" data-tab="dashboard">📈 Dashboard</button>
+      <button class="tab" data-tab="sales">💰 Gestão de Pagamentos</button>
+      <button class="tab" data-tab="report">📊 Relatório (Promotora)</button>
+      <button class="tab" data-tab="promotoras">👥 Promotoras</button>
+      <button class="tab" data-tab="appearance">🎨 Aparência</button>
+      <button class="tab" data-tab="texts">✏️ Textos & Avisos</button>
+      <button class="tab" data-tab="payment">💳 Config. Pagamento</button>
+      <button class="tab" data-tab="prices">💲 Preços</button>
+      <button class="tab" data-tab="coupons">🎟️ Cupons</button>
+      <button class="tab" data-tab="advanced">⚙️ Avançado (CSS)</button>
+    </div>
+    
+    <div id="dashboard" class="pane active">
+      <h3>Dashboard (Visão Geral)</h3>
+      <div class="grid3">
+        <div class="stat-box">
+          <label>Total Arrecadado (Pago)</label>
+          <h2 id="statTotalLucro">R$ 0,00</h2>
+        </div>
+        <div class="stat-box">
+          <label>Valor Pendente (Aguardando Conf.)</label>
+          <h2 id="statTotalPendente" class="pending">R$ 0,00</h2>
+        </div>
+         <div class="stat-box">
+          <label>Total de Vendas (Pagas)</label>
+          <h2 id="statTotalVendas">0</h2>
+        </div>
+      </div>
+      <div class="grid3" style="margin-top: 12px;">
+        <div class="stat-box">
+          <label>Ingressos Masculinos (Pagos)</label>
+          <h2 id="statTotalM">0</h2>
+        </div>
+        <div class="stat-box">
+          <label>Ingressos Femininos (Pagos)</label>
+          <h2 id="statTotalF">0</h2>
+        </div>
+        <div class="stat-box">
+          <label>Ticket Médio (Pago)</label>
+          <h2 id="statTicketMedio">R$ 0,00</h2>
+        </div>
+      </div>
+      <p class="muted" style="margin-top: 10px;">Estes dados são baseados **apenas** nas vendas que você marcou como "Pago" na Gestão de Pagamentos.</p>
+    </div>
+    
+    <div id="sales" class="pane">
+      <h3>Gestão de Pagamentos</h3>
+      <div class="filters-bar">
+        <input id="filterInput" type="text" placeholder="Filtrar por nome, whatsapp, promotora, instagram..." />
+        <select id="filterPromotora">
+          <option value="">Filtrar por Promotora</option>
+          </select>
+      </div>
+      <div class="actions-bar">
+        <button id="btnRefreshSales" class="btn">🔄 Atualizar Dados</button>
+        <button id="btnExportFullCsv" class="btn secondary">📄 Exportar CSV Completo</button>
+        <button id="btnClearSales" class="btn danger">🗑️ Limpar Vendas</button>
+      </div>
+      <div class="table-wrap">
+        <table class="table" id="salesTable">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Data/Hora</th>
+              <th>Nome do Comprador</th>
+              <th>WhatsApp</th>
+              <th>Ingressos</th>
+              <th>Total (R$)</th>
+              <th>Promotora</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="report" class="pane">
+      <h3>Relatório por Promotora (Apenas vendas Pagas)</h3>
+      <table class="table" id="reportTable">
+        <thead><tr><th>Promotora</th><th>Ingressos M</th><th>Ingressos F</th><th>Total</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="row" style="margin-top:8px"><button id="btnExportReport" class="btn">Exportar Resumo CSV</button></div>
+    </div>
+    
+    <div id="promotoras" class="pane">
+      <h3>Gerenciar Promotoras</h3>
+      <div class="row" style="align-items:center;gap:8px">
+        <input id="promNome" type="text" placeholder="Nome da promotora / nome artístico" style="width: 300px;" />
+        <button id="btnAddProm" class="btn">Adicionar</button>
+      </div>
+      <table class="table" id="promTable" style="margin-top:10px">
+        <thead><tr><th>Nome</th><th>Ações</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div id="appearance" class="pane">
+      <h3>Aparência</h3>
+      <div class="grid4">
+        <div><label>Cor Primária</label><input id="thPrimary" type="text" placeholder="#7c5cff"></div>
+        <div><label>Cor Secundária</label><input id="thSecondary" type="text" placeholder="#3ca6ff"></div>
+        <div><label>Cor Terciária (Confete)</label><input id="thTertiary" type="text" placeholder="#ff6b6b"></div>
+        <div><label>Raio dos Cantos (px)</label><input id="thRadius" type="number" min="0" step="1" placeholder="14"></div>
+      </div>
+      <div style="margin-top:12px">
+        <label>URL da Imagem (Logo Flutuante)</label>
+        <input id="thFabImage" type="text" placeholder="https://i.imgur.com/seu-logo.png">
+        <p class="muted">Cole a URL de uma imagem hospedada (Ex: imgur.com) para o botão flutuante do Instagram.</p>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button id="btnSaveAppearance" class="btn">Salvar</button>
+      </div>
+    </div>
+
+    <div id="texts" class="pane">
+      <h3>Textos & Avisos</h3>
+      <div class="grid2">
+        <div><label>Título hero (site)</label><input id="txHeroTitle" type="text" placeholder="Bilheteria Online"></div>
+        <div><label>Subtítulo hero (site)</label><input id="txHeroSubtitle" type="text" placeholder="Baile do RK"></div>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <div><label>H1 da página</label><input id="txPageTitle" type="text" placeholder="Finalize seu ingresso com Pix em segundos"></div>
+        <div><label>Subtítulo da página</label><input id="txPageSubtitle" type="text" placeholder="Wizard de 3 etapas…"></div>
+      </div>
+      <label style="margin-top:10px">Aviso (etapa 1)</label><textarea id="txNotice1"></textarea>
+      <label style="margin-top:10px">Aviso (pagamento)</label><textarea id="txNotice2"></textarea>
+      <label style="margin-top:10px">Título “Obrigado”</label><input id="txThanksTitle" type="text" placeholder="🎉 Obrigado pela compra!">
+      <label style="margin-top:10px">Texto “Obrigado” (HTML permitido)</label><textarea id="txThanksText"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button id="btnSaveTexts" class="btn">Salvar</button>
+      </div>
+    </div>
+
+    <div id="payment" class="pane">
+      <h3>Configurações de Pagamento</h3>
+      <div class="grid3">
+        <div><label>Chave PIX</label><input id="pgPixKey" type="text" placeholder="email@exemplo.com"></div>
+        <div><label>Nome do recebedor (max 25)</label><input id="pgMerchant" type="text" placeholder="NOME COMPLETO"></div>
+        <div><label>Cidade (max 15)</label><input id="pgCity" type="text" placeholder="RECIFE"></div>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <div><label>WhatsApp destino (formato +55DDDNXXXXXXXX)</label><input id="pgWhats" type="text" placeholder="+5581xxxxxxxxx"></div>
+        <div><label>Link Instagram (completo)</label><input id="pgInsta" type="text" placeholder="https://instagram.com/seu-user"></div>
+      </div>
+      <div class="row" style="margin-top:8px"><button id="btnSavePayment" class="btn">Salvar</button></div>
+    </div>
+
+    <div id="prices" class="pane">
+      <h3>Preços</h3>
+      <div class="grid2">
+        <div><label>Preço base Masculino (R$)</label><input id="prBaseM" type="number" step="0.01" min="0" placeholder="25"></div>
+        <div><label>Preço base Feminino (R$)</label><input id="prBaseF" type="number" step="0.01" min="0" placeholder="15"></div>
+      </div>
+      <p class="muted">Os cupons abaixo podem substituir esses valores quando aplicados.</p>
+      <div class="row" style="margin-top:8px"><button id="btnSavePrices" class="btn">Salvar</button></div>
+    </div>
+
+    <div id="coupons" class="pane">
+      <h3>Cupons</h3>
+      <div class="row">
+        <div><label>Código (exato)</label><input id="cpCode" type="text" placeholder="PRIMEIRO LOTE"></div>
+        <div><label>Preço M (R$)</label><input id="cpM" type="number" step="0.01" min="0" placeholder="20"></div>
+        <div><label>Preço F (R$)</label><input id="cpF" type="number" step="0.01" min="0" placeholder="10"></div>
+        <div class="row" style="align-items:flex-end"><button id="btnAddCoupon" class="btn">Adicionar/Atualizar</button></div>
+      </div>
+      <table class="table" id="cpTable">
+        <thead><tr><th>Código</th><th>Masculino</th><th>Feminino</th><th>Status</th><th>Ações</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div id="advanced" class="pane">
+      <h3>Avançado</h3>
+      <label>CSS personalizado (injetado no site)</label>
+      <textarea id="advCss" placeholder="/* exemplo: */ 
+:root{ --r:18px } 
+h1{ letter-spacing:.5px }"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button id="btnSaveCss" class="btn">Salvar CSS</button>
+        <p class="muted">Import/Export/Reset desativado. O backup agora é feito pelo Firebase.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="detailsBackdrop" style="display:none;">
+  <div id="detailsModal">
+    <button id="btnCloseDetails" class="btn small danger" style="float: right; cursor: pointer;">X</button>
+    <h3>Detalhes da Venda</h3>
+    <div id="detailsContent">
+      </div>
+  </div>
+</div>
+
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ===== Constantes / chaves ===== */
+const ADMIN_EMAIL='admbilheteria@gmail.com';
+const ADMIN_PASS='rkvidalouca1@';
+const ADMIN_FLAG='rk_admin_logged_v1';
+const TOTP_ENABLED='rk_totp_enabled';
+const TOTP_SECRET='rk_totp_secret_b32';
+const TOTP_ISSUER='Baile do RK';
+// REMOVIDO: const CFG_KEY='rk_site_cfg_v1'; 
+// REMOVIDO: const SALES_KEY = 'rk_bilhetes_vendas_v1'; 
+
+/* ===== Config Firebase (ATUALIZADO) ===== */
+const firebaseConfig = {
+  apiKey: "AIzaSyDbblpUh93x0CUOquVCt_fqPjDoE8515Ao",
+  authDomain: "bilheteria-rk.firebaseapp.com",
+  projectId: "bilheteria-rk",
+  storageBucket: "bilheteria-rk.firebasestorage.app",
+  messagingSenderId: "853871836419",
+  appId: "1:853871836419:web:0cf543e0f511aa92a8bd36"
+};
+
+// Inicializa Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const configRef = db.collection('config').doc('site');
+const salesRef = db.collection('sales');
+
+
+/* ===== Config padrão (Fallback) ===== */
+const DEFAULT_CFG = {
+  theme:{ 
+    primary:'#7c5cff', 
+    secondary:'#3ca6ff', 
+    tertiary: '#ff6b6b',
+    radius:14,
+    fabImage: 'https://bailedork.github.io/ingressos/logo-baile.jpg.jpeg' // <-- LOGO ATUALIZADA
+  },
+  texts:{
+    heroTitle:'Bilheteria Online',
+    heroSubtitle:'Baile do RK',
+    pageTitle:'Finalize seu ingresso com Pix em segundos',
+    pageSubtitle:'Wizard de 4 etapas • QR Pix com valor automático • Mensagem do WhatsApp com todos os nomes.',
+    noticeImportant:'<strong>Importante:</strong><br>• <strong>Não haverá devolução de valor.</strong> Só compre o ingresso se tiver total certeza de que vai comparecer ao evento.<br>• A <strong>localização e demais informações</strong> serão divulgadas no <strong>grupo exclusivo dos compradores</strong> após a confirmação do pagamento.',
+    noticePayment:'<strong>Importante:</strong><br>• <strong>Não haverá devolução de valor.</strong><br>• A <strong>localização e informações oficiais</strong> serão divulgadas apenas no <strong>grupo exclusivo dos compradores</strong> após a confirmação do pagamento.',
+    thanksTitle:'🎉 Obrigado pela compra!',
+    thanksText:'Recebemos sua confirmação. Agora é só <strong>enviar o comprovante</strong> no WhatsApp (já abrimos em outra guia para você). Assim que validarmos, você será adicionado ao <strong>grupo exclusivo dos compradores</strong>, onde divulgaremos a <strong>localização e todas as informações oficiais</strong> do evento.'
+  },
+  payment:{ 
+    pixKey: 'bailedork2025@gmail.com', // <-- SEU DADO CORRIGIDO
+    merchant: 'RICARDO WILLYSMAR PEREIRA', // <-- SEU DADO CORRIGIDO (25 Chars)
+    city: 'RECIFE', // <-- SEU DADO CORRIGIDO
+    whatsapp:'+5581991405977',
+    instagram: 'https://instagram.com/bailedork'
+  },
+  prices:{ M:25, F:15 },
+  coupons:[ 
+    { code:'PRIMEIRO LOTE', M:20, F:10, active:true },
+    { code:'testerk', M:0.01, F:0.01, active:true },  // <-- CUPOM ADICIONADO
+    { code:'TESTE RK', M:0.01, F:0.01, active:true } // <-- CUPOM ADICIONADO
+  ],
+  promotoras: [
+    "Larissa / Lari","Samara / Mara","Yasmim / Paris","Isa","Adriane / Drih",
+    "Ketlyn / Keu","Kaylane / Kayh","Yasmim Lima","Vivian","Bianca"
+  ],
+  customCSS:''
+};
+
+/* ===== Util ===== */
+const BRL = n => (n || 0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const id = s => document.getElementById(s);
+const toast = m => { const t=id('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1500); };
+const fmtDate = (timestamp) => { 
+  try { 
+    const d = timestamp.toDate(); // Converte Timestamp do Firebase para Date
+    return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}); 
+  } catch (e) { 
+    return 'data inválida'; 
+  } 
+}
+
+/* ===== FUNÇÕES DE DADOS (Firebase) ===== */
+let localConfig = {}; // Cache local da config
+let localSales = []; // Cache local das vendas
+
+// Carrega a configuração do Firebase
+async function loadCfg() {
+  try {
+    const doc = await configRef.get();
+    if (!doc.exists) {
+      // Se não existe, cria a config padrão no Firebase
+      await configRef.set(DEFAULT_CFG);
+      localConfig = DEFAULT_CFG;
+      return DEFAULT_CFG;
+    }
+    localConfig = doc.data();
+    return localConfig;
+  } catch (err) {
+    console.error("Erro ao carregar config:", err);
+    alert("Erro ao carregar configuração do Firebase.");
+    return DEFAULT_CFG;
+  }
+}
+
+// Salva a configuração no Firebase
+async function saveCfg(cfg) {
+  try {
+    await configRef.set(cfg);
+    localConfig = cfg; // Atualiza cache local
+    toast('Configurações salvas na nuvem.');
+  } catch (err) {
+    console.error("Erro ao salvar config:", err);
+    alert("Erro ao salvar configuração. Verifique seu console (F12).");
+  }
+}
+
+// Carrega as vendas do Firebase
+async function loadSales() {
+  try {
+    const snapshot = await salesRef.orderBy('ts', 'desc').get();
+    localSales = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return localSales;
+  } catch (err) {
+    console.error("Erro ao carregar vendas:", err);
+    alert("Erro ao carregar vendas. Verifique seu console (F12).");
+    return [];
+  }
+}
+
+// Atualiza o status de uma venda no Firebase
+async function updateSaleStatus(saleId, newStatus) {
+  try {
+    await salesRef.doc(saleId).update({ status: newStatus });
+    toast(`Venda marcada como ${newStatus === 'paid' ? 'Paga' : 'Cancelada'}.`);
+  } catch (err) {
+    console.error("Erro ao atualizar status:", err);
+    alert("Erro ao atualizar status da venda.");
+  }
+}
+
+// Limpa TODAS as vendas (PERIGOSO)
+async function clearSales() {
+  if (!confirm('TEM CERTEZA?\n\nIsso apagará PERMANENTEMENTE todo o histórico de vendas do banco de dados na nuvem. Esta ação não pode ser desfeita.')) {
+    return;
+  }
+  
+  toast('Apagando... Isso pode demorar um momento.');
+  const sales = await loadSales();
+  // Deleta em lotes para não sobrecarregar
+  const batch = db.batch();
+  sales.forEach(sale => {
+    batch.delete(salesRef.doc(sale.id));
+  });
+  
+  try {
+    await batch.commit();
+    toast('Histórico de vendas apagado.');
+    await refreshAllData();
+  } catch (err) {
+    console.error("Erro ao apagar vendas:", err);
+    alert("Erro ao apagar vendas.");
+  }
+}
+
+
+/* ===== 2FA helpers ===== */
+// (O código 2FA é local e não precisa mudar)
+const b32alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+function b32decodeToBytes(b32){ const s=(b32||"").toUpperCase().replace(/=+$/,'').replace(/\s+/g,''); let bits='',out=[]; for(const ch of s){ const v=b32alphabet.indexOf(ch); if(v<0) continue; bits += v.toString(2).padStart(5,'0'); } for(let i=0;i+8<=bits.length;i+=8){ out.push(parseInt(bits.slice(i,i+8),2)); } return new Uint8Array(out); }
+async function hmacSha1(keyBytes,msgBytes){ const k=await crypto.subtle.importKey('raw',keyBytes,{name:'HMAC',hash:'SHA-1'},false,['sign']); const sig=await crypto.subtle.sign('HMAC',k,msgBytes); return new Uint8Array(sig); }
+function int2bytes(num){ const a=new Uint8Array(8); new DataView(a.buffer).setUint32(4,num); return a; }
+async function totpNow(b32Secret,period=30,digits=6){ const key=b32decodeToBytes(b32Secret); const ctr=Math.floor(Date.now()/1000/period); const msg=int2bytes(ctr); const h=await hmacSha1(key,msg); const off=h[h.length-1]&0x0f; const bin=((h[off]&0x7f)<<24)|((h[off+1]&0xff)<<16)|((h[off+2]&0xff)<<8)|(h[off+3]&0xff); return String(bin % (10**digits)).padStart(digits,'0'); }
+function randomBase32(len=32){ const b=new Uint8Array(len); crypto.getRandomValues(b); let out=''; for(const x of b){ out += b32alphabet[x%32]; } return out; }
+function otpauthURL(secret,label,issuer=TOTP_ISSUER){ return `otpauth://totp/${encodeURIComponent(label)}?secret=${secret}&issuer=${encodeURIComponent(issuer)}&algorithm=SHA1&digits=6&period=30`; }
+
+/* ===== Login ===== */
+function showLogin(){ id('login').style.display='block'; id('app').style.display='none'; }
+function showApp(){ id('login').style.display='none'; id('app').style.display='block'; }
+
+function doLogin(){
+  const e=(id('email').value||'').trim().toLowerCase();
+  const p=id('pass').value||'';
+  id('errLogin').style.display='none';
+  if(e===ADMIN_EMAIL && p===ADMIN_PASS){
+    const enabled=localStorage.getItem(TOTP_ENABLED)==='1';
+    const secret=localStorage.getItem(TOTP_SECRET)||'';
+    if(enabled && secret){
+      id('twofa').style.display='block';
+      id('setup').style.display='none';
+    }else{
+      const sec = randomBase32(32);
+      localStorage.setItem(TOTP_SECRET, sec);
+      id('twofa').style.display='none';
+      id('setup').style.display='block';
+      const url=otpauthURL(sec, `${TOTP_ISSUER}:${ADMIN_EMAIL}`);
+      id('totpQR').innerHTML=''; new QRCode(id('totpQR'),{text:url,width:150,height:150,colorDark:'#000',colorLight:'#fff'});
+      id('totpSecret').textContent=sec;
+    }
+  }else{
+    id('errLogin').style.display='block';
+  }
+}
+async function verify2FA(){
+  const code=(id('totpCode').value||'').trim().padStart(6,'0');
+  const secret=localStorage.getItem(TOTP_SECRET)||'';
+  if(code.length!==6 || !secret){ id('err2').style.display='block'; return; }
+  const cur=await totpNow(secret); const prev=await totpNow(secret); const next=await totpNow(secret);
+  if([cur,prev,next].includes(code)){ localStorage.setItem(ADMIN_FLAG,'1'); enter(); }
+  else{ id('err2').style.display='block'; }
+}
+async function confirmSetup2FA(){
+  const code=(id('totpSetupCode').value||'').trim().padStart(6,'0');
+  const secret=localStorage.getItem(TOTP_SECRET)||'';
+  if(code.length!==6 || !secret){ id('errSetup').style.display='block'; return; }
+  const cur=await totpNow(secret); const prev=await totpNow(secret); const next=await totpNow(secret);
+  if([cur,prev,next].includes(code)){
+    localStorage.setItem(TOTP_ENABLED,'1');
+    id('errSetup').style.display='none'; id('okSetup').style.display='block';
+    setTimeout(()=>{ localStorage.setItem(ADMIN_FLAG,'1'); enter(); },600);
+  }else{ id('errSetup').style.display='block'; }
+}
+function copySecret(){ const s=localStorage.getItem(TOTP_SECRET)||''; if(!s) return; navigator.clipboard?.writeText(s).then(()=>toast('Segredo copiado!')); }
+function regenSecret(){ const s=randomBase32(32); localStorage.setItem(TOTP_SECRET,s); id('totpSecret').textContent=s; id('totpQR').innerHTML=''; new QRCode(id('totpQR'),{text:otpauthURL(s,`${TOTP_ISSUER}:${ADMIN_EMAIL}`),width:150,height:150,colorDark:'#000',colorLight:'#fff'}); toast('Novo segredo gerado.'); }
+
+async function enter(){ 
+  showApp(); 
+  await renderAll(); 
+  toast('Login realizado.');
+  checkConfig(); 
+}
+function logout(){ localStorage.removeItem(ADMIN_FLAG); showLogin(); toast('Sessão encerrada.'); }
+
+/* ===== Checagem de Config (NOVO) ===== */
+function checkConfig() {
+  if (!localConfig.payment.pixKey || !localConfig.payment.merchant || !localConfig.payment.city) {
+    id('config-alert').style.display = 'block';
+    // Força o usuário a ir para a aba de pagamento
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelector('.tab[data-tab="payment"]').classList.add('active');
+    document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+    id('payment').classList.add('active');
+  } else {
+    id('config-alert').style.display = 'none';
+  }
+}
+
+/* ===== UI Tabs ===== */
+document.addEventListener('click', async (e)=>{
+  if(e.target.classList.contains('tab')){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    e.target.classList.add('active');
+    const tab=e.target.dataset.tab;
+    document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+    id(tab).classList.add('active');
+    // Atualiza relatórios ao clicar na aba
+    if (tab === 'report') renderReport();
+    if (tab === 'dashboard') renderDashboard();
+    if (tab === 'sales') renderSalesTable();
+  }
+});
+
+/* ===== Render / Bind ===== */
+function renderAppearance(cfg){ 
+  id('thPrimary').value = cfg.theme.primary; 
+  id('thSecondary').value = cfg.theme.secondary; 
+  id('thTertiary').value = cfg.theme.tertiary;
+  id('thRadius').value = cfg.theme.radius; 
+  id('thFabImage').value = cfg.theme.fabImage;
+}
+function renderTexts(cfg){
+  id('txHeroTitle').value   = cfg.texts.heroTitle;
+  id('txHeroSubtitle').value= cfg.texts.heroSubtitle;
+  id('txPageTitle').value   = cfg.texts.pageTitle;
+  id('txPageSubtitle').value= cfg.texts.pageSubtitle;
+  id('txNotice1').value     = cfg.texts.noticeImportant;
+  id('txNotice2').value     = cfg.texts.noticePayment;
+  id('txThanksTitle').value = cfg.texts.thanksTitle;
+  id('txThanksText').value  = cfg.texts.thanksText;
+}
+function renderPayment(cfg){
+  id('pgPixKey').value = cfg.payment.pixKey;
+  id('pgMerchant').value = cfg.payment.merchant;
+  id('pgCity').value = cfg.payment.city;
+  id('pgWhats').value = cfg.payment.whatsapp;
+  id('pgInsta').value = cfg.payment.instagram;
+}
+function renderPrices(cfg){
+  id('prBaseM').value = cfg.prices.M;
+  id('prBaseF').value = cfg.prices.F;
+}
+function renderCoupons(cfg){
+  const tbody=id('cpTable').querySelector('tbody'); tbody.innerHTML='';
+  (cfg.coupons||[]).forEach((c,idx)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${c.code}</td>
+      <td>${BRL(c.M)}</td>
+      <td>${BRL(c.F)}</td>
+      <td>${c.active ? '<span class="pill">Ativo</span>' : '<span class="pill" style="opacity:.6">Inativo</span>'}</td>
+      <td class="row">
+        <button class="btn secondary small" data-act="toggle" data-idx="${idx}">${c.active?'Desativar':'Ativar'}</button>
+        <button class="btn small" data-act="edit" data-idx="${idx}">Editar</button>
+        <button class="btn danger small" data-act="del" data-idx="${idx}">Remover</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+function renderAdvanced(cfg){ id('advCss').value = cfg.customCSS || ''; }
+
+/* ===== Promotoras management ===== */
+function renderPromotorasAdmin(cfg){
+  const tbody = document.getElementById('promTable').querySelector('tbody');
+  tbody.innerHTML = '';
+  const list = cfg.promotoras || [];
+  list.forEach((p, idx)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${p}</td><td><button data-idx="${idx}" class="btn small ghost prom-edit">Editar</button> <button data-idx="${idx}" class="btn small danger prom-del">Remover</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+async function bindPromotorasAdmin(){
+  document.getElementById('btnAddProm').onclick = async ()=>{
+    const v = (document.getElementById('promNome').value||'').trim();
+    if(!v) return alert('Informe o nome da promotora');
+    
+    let cfg = { ...localConfig }; // Copia do cache
+    cfg.promotoras = cfg.promotoras || [];
+    if (cfg.promotoras.includes(v)) {
+      toast('Promotora já existe.');
+      return;
+    }
+    cfg.promotoras.push(v);
+    cfg.promotoras.sort(); // Manter em ordem alfabética
+    await saveCfg(cfg); 
+    renderPromotorasAdmin(cfg);
+    document.getElementById('promNome').value = '';
+  };
+  document.getElementById('promTable').addEventListener('click', async (e)=>{
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    const idx = Number(btn.dataset.idx);
+    let cfg = { ...localConfig };
+    
+    if(btn.classList.contains('prom-del')){
+      if (confirm('Remover esta promotora?')) {
+        cfg.promotoras.splice(idx,1); 
+        await saveCfg(cfg); 
+        renderPromotorasAdmin(cfg);
+      }
+    } else if(btn.classList.contains('prom-edit')){
+      const newName = prompt('Editar nome da promotora', cfg.promotoras[idx]||'');
+      if(newName && newName.trim()) { 
+        cfg.promotoras[idx] = newName.trim(); 
+        cfg.promotoras.sort();
+        await saveCfg(cfg); 
+        renderPromotorasAdmin(cfg); 
+      }
+    }
+  });
+}
+
+/* ===== Gestão de Pagamentos (ATUALIZADO) ===== */
+function renderSalesTable() {
+  const rows = localSales; // Usa o cache local
+  const tbody = id('salesTable').querySelector('tbody');
+  const promFilter = id('filterPromotora');
+  tbody.innerHTML = '';
+  
+  // Popular filtro de promotora
+  const promotoras = [...new Set(rows.map(r => r.promotora || 'Nenhuma'))].sort();
+  promFilter.innerHTML = '<option value="">Todas as Promotoras</option>';
+  promotoras.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p;
+    opt.textContent = p;
+    promFilter.appendChild(opt);
+  });
+  
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr class="no-results"><td colspan="8">Nenhuma venda registrada ainda.</td></tr>';
+    return;
+  }
+  
+  rows.forEach(r => {
+    const tr = document.createElement('tr');
+    // Atributos de dados para facilitar a filtragem
+    const searchData = [
+      r.nome, r.whats, r.promotora, r.instagram, r.status
+    ].join(' ').toLowerCase();
+    tr.dataset.search = searchData;
+    tr.dataset.promotora = r.promotora || 'Nenhuma';
+    
+    // Serializa os dados da venda para o botão
+    const detailsData = JSON.stringify(r);
+    
+    let statusPill = `<span class="pill">${r.status.charAt(0).toUpperCase() + r.status.slice(1)}</span>`;
+    if (r.status === 'paid') statusPill = `<span class="pill paid">Pago</span>`;
+    if (r.status === 'cancelled') statusPill = `<span class="pill cancelled">Cancelado</span>`;
+    
+    tr.innerHTML = `
+      <td>${statusPill}</td>
+      <td>${fmtDate(r.ts)}</td>
+      <td>${r.nome}</td>
+      <td>${r.whats}</td>
+      <td>${r.qM} M, ${r.qF} F</td>
+      <td>${BRL(r.total)}</td>
+      <td>${r.promotora || 'Nenhuma'}</td>
+      <td class="row" style="gap: 5px;">
+        <button class="btn small success btn-status" data-id="${r.id}" data-status="paid" ${r.status === 'paid' ? 'disabled' : ''}>Pago</button>
+        <button class="btn small danger btn-status" data-id="${r.id}" data-status="cancelled" ${r.status === 'cancelled' ? 'disabled' : ''}>Canc.</button>
+        <button class="btn small ghost btn-details" data-details='${detailsData.replace(/'/g, "&apos;")}'>Detalhes</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+  
+  filterSalesTable();
+}
+
+// Modal de Detalhes (ATUALIZADO)
+function showDetailsModal(data) {
+  const content = id('detailsContent');
+  let companionsHTML = '<div class="comp-list"><h4>Acompanhantes</h4>';
+  
+  if (data.companions && data.companions.length > 0) {
+    // Separa por gênero
+    const companionsM = data.companions.filter(c => c.gender === 'Masculino');
+    const companionsF = data.companions.filter(c => c.gender === 'Feminino');
+    
+    if (companionsM.length > 0) {
+      companionsHTML += '<h5>Masculinos:</h5>';
+      companionsM.forEach((c, i) => {
+        companionsHTML += `<div><strong>Acomp. #${i+1}:</strong> ${c.name || '(não informado)'} | <strong>Whats:</strong> ${c.whats || '(não informado)'}</div>`;
+      });
+    }
+    if (companionsF.length > 0) {
+      companionsHTML += '<h5 style="margin-top: 10px;">Femininos:</h5>';
+      companionsF.forEach((c, i) => {
+        companionsHTML += `<div><strong>Acomp. #${i+1}:</strong> ${c.name || '(não informado)'} | <strong>Whats:</strong> ${c.whats || '(não informado)'}</div>`;
+      });
+    }
+    if (companionsM.length === 0 && companionsF.length === 0) {
+        companionsHTML += '<div>Nenhum acompanhante informado.</div>';
+    }
+
+  } else {
+    companionsHTML += '<div>Nenhum acompanhante informado.</div>';
+  }
+  companionsHTML += '</div>';
+
+  content.innerHTML = `
+    <div><strong>Comprador:</strong> ${data.nome}</div>
+    <div><strong>WhatsApp:</strong> ${data.whats}</div>
+    <div><strong>Instagram:</strong> ${data.instagram || '(não informado)'}</div>
+    <div><strong>Promotora:</strong> ${data.promotora || 'Nenhuma'}</div>
+    <div><strong>Gênero:</strong> ${data.genero || 'N/A'}</div>
+    <div><strong>Ing. p/ Ele:</strong> ${data.ingressoParaMim || 'N/A'}</div>
+    <div><strong>Ing. M:</strong> ${data.qM}</div>
+    <div><strong>Ing. F:</strong> ${data.qF}</div>
+    <div><strong>Total Pago:</strong> ${BRL(data.total)}</div>
+    ${companionsHTML}
+  `;
+  
+  id('detailsBackdrop').style.display = 'flex';
+}
+function hideDetailsModal() {
+  id('detailsBackdrop').style.display = 'none';
+}
+
+
+function filterSalesTable() {
+  const text = (id('filterInput').value || '').toLowerCase();
+  const prom = id('filterPromotora').value;
+  const rows = id('salesTable').querySelectorAll('tbody tr');
+  let hasResults = false;
+  
+  rows.forEach(tr => {
+    if (tr.classList.contains('no-results')) return;
+    
+    const promMatch = (prom === "" || tr.dataset.promotora === prom);
+    const textMatch = (text === "" || tr.dataset.search.includes(text));
+    
+    if (promMatch && textMatch) {
+      tr.classList.remove('hidden');
+      hasResults = true;
+    } else {
+      tr.classList.add('hidden');
+    }
+  });
+  
+  const noResultsRow = id('salesTable').querySelector('.no-results');
+  if (!hasResults && !noResultsRow) {
+    id('salesTable').querySelector('tbody').innerHTML = '<tr class="no-results"><td colspan="8">Nenhum resultado encontrado para os filtros aplicados.</td></tr>';
+  } else if (hasResults && noResultsRow) {
+    try { noResultsRow.remove(); } catch(e) {}
+  }
+}
+
+function exportFullCSV() {
+  const rows = localSales; // Usa cache
+  if (rows.length === 0) {
+    alert('Nenhuma venda para exportar.');
+    return;
+  }
+  
+  const header = [
+    'data_hora', 'status_pagamento', 'nome_comprador', 'whatsapp', 'promotora', 
+    'genero_comprador', 'ingresso_para_ele', 'instagram', 
+    'qtd_m', 'qtd_f', 'total_brl', 'acompanhantes'
+  ];
+  
+  const lines = [header.join(',')];
+  rows.forEach(r => {
+    const companions = (r.companions || []).map(c => `${c.name} (${c.gender} - ${c.whats})`).join(' | ');
+    const line = [
+      `"${fmtDate(r.ts)}"`,
+      `"${r.status || 'pending'}"`,
+      `"${r.nome || ''}"`,
+      `"${r.whats || ''}"`,
+      `"${r.promotora || 'Nenhuma'}"`,
+      `"${r.genero || ''}"`,
+      `"${r.ingressoParaMim || ''}"`,
+      `"${r.instagram || ''}"`,
+      r.qM,
+      r.qF,
+      (r.total || 0).toFixed(2).replace('.',','),
+      `"${companions}"`
+    ].join(',');
+    lines.push(line);
+  });
+  
+  const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'relatorio_vendas_completo.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* ===== Relatório por Promotora (ATUALIZADO) ===== */
+function renderReport(){
+  const rows = localSales; // Usa cache
+  const map = {};
+  rows.forEach(r=>{
+    // SÓ SOMA SE ESTIVER PAGO
+    if (r.status !== 'paid') return;
+    
+    const p = r.promotora || 'Nenhuma';
+    if(!map[p]) map[p] = {M:0,F:0,total:0};
+    map[p].M += Number(r.qM||0);
+    map[p].F += Number(r.qF||0);
+    map[p].total += Number(r.total||0);
+  });
+  const tbody = document.getElementById('reportTable').querySelector('tbody');
+  tbody.innerHTML = '';
+  Object.keys(map).sort().forEach(k=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${k}</td><td>${map[k].M}</td><td>${map[k].F}</td><td>${BRL(map[k].total)}</td>`;
+    tbody.appendChild(tr);
+  });
+  // export button
+  document.getElementById('btnExportReport').onclick = ()=>{
+    const lines = [['promotora','ingressos_m','ingressos_f','total_brl']];
+    Object.keys(map).sort().forEach(k=> lines.push([`"${k}"`, map[k].M, map[k].F, map[k].total.toFixed(2)].join(',')));
+    const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8'}); const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download='resumo_promotora.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  };
+}
+
+/* ===== Dashboard (ATUALIZADO) ===== */
+function renderDashboard() {
+  const rows = localSales; // Usa cache
+  let totalLucro = 0;
+  let totalPendente = 0;
+  let totalVendas = 0;
+  let totalM = 0;
+  let totalF = 0;
+  
+  rows.forEach(r => {
+    if (r.status === 'paid') {
+      totalLucro += Number(r.total || 0);
+      totalM += Number(r.qM || 0);
+      totalF += Number(r.qF || 0);
+      totalVendas++;
+    } else if (r.status === 'pending') {
+      totalPendente += Number(r.total || 0);
+    }
+  });
+  
+  id('statTotalLucro').textContent = BRL(totalLucro);
+  id('statTotalPendente').textContent = BRL(totalPendente);
+  id('statTotalVendas').textContent = totalVendas;
+  id('statTotalM').textContent = totalM;
+  id('statTotalF').textContent = totalF;
+  id('statTicketMedio').textContent = BRL(totalVendas > 0 ? totalLucro / totalVendas : 0);
+}
+
+
+/* Render all tabs */
+async function renderAll(){ 
+  toast('Carregando dados da nuvem...');
+  const cfg = await loadCfg(); 
+  await loadSales();
+  
+  renderAppearance(cfg); 
+  renderTexts(cfg); 
+  renderPayment(cfg); 
+  renderPrices(cfg); 
+  renderCoupons(cfg); 
+  renderAdvanced(cfg); 
+  renderPromotorasAdmin(cfg);
+  bindPromotorasAdmin(cfg); // Re-bind
+  
+  // Renderiza os relatórios
+  renderDashboard();
+  renderSalesTable();
+  renderReport();
+  toast('Dados carregados!');
+}
+
+/* ===== Saves (ATUALIZADO) ===== */
+id('btnSaveAppearance').addEventListener('click', async ()=>{ 
+  const cfg = { ...localConfig }; // Pega do cache
+  cfg.theme.primary = id('thPrimary').value||DEFAULT_CFG.theme.primary; 
+  cfg.theme.secondary = id('thSecondary').value||DEFAULT_CFG.theme.secondary; 
+  cfg.theme.tertiary = id('thTertiary').value||DEFAULT_CFG.theme.tertiary; 
+  cfg.theme.radius = Number(id('thRadius').value||DEFAULT_CFG.theme.radius); 
+  cfg.theme.fabImage = id('thFabImage').value||'';
+  await saveCfg(cfg); 
+});
+id('btnSaveTexts').addEventListener('click', async ()=>{ 
+  const cfg = { ...localConfig }; 
+  cfg.texts.heroTitle=id('txHeroTitle').value||DEFAULT_CFG.texts.heroTitle; 
+  cfg.texts.heroSubtitle=id('txHeroSubtitle').value||DEFAULT_CFG.texts.heroSubtitle; 
+  cfg.texts.pageTitle=id('txPageTitle').value||DEFAULT_CFG.texts.pageTitle; 
+  cfg.texts.pageSubtitle=id('txPageSubtitle').value||DEFAULT_CFG.texts.pageSubtitle; 
+  cfg.texts.noticeImportant=id('txNotice1').value||DEFAULT_CFG.texts.noticeImportant; 
+  cfg.texts.noticePayment=id('txNotice2').value||DEFAULT_CFG.texts.noticePayment; 
+  cfg.texts.thanksTitle=id('txThanksTitle').value||DEFAULT_CFG.texts.thanksTitle; 
+  cfg.texts.thanksText=id('txThanksText').value||DEFAULT_CFG.texts.thanksText; 
+  await saveCfg(cfg); 
+});
+id('btnSavePayment').addEventListener('click', async ()=>{ 
+  const cfg = { ...localConfig }; 
+  cfg.payment.pixKey=id('pgPixKey').value||''; 
+  cfg.payment.merchant=(id('pgMerchant').value||'').toUpperCase().slice(0,25); 
+  cfg.payment.city=(id('pgCity').value||'').toUpperCase().slice(0,15); 
+  cfg.payment.whatsapp=id('pgWhats').value||DEFAULT_CFG.payment.whatsapp; 
+  cfg.payment.instagram=id('pgInsta').value||DEFAULT_CFG.payment.instagram; 
+  await saveCfg(cfg);
+  checkConfig(); // Re-checa a config após salvar
+});
+id('btnSavePrices').addEventListener('click', async ()=>{ 
+  const cfg = { ...localConfig }; 
+  cfg.prices.M=Number(id('prBaseM').value||DEFAULT_CFG.prices.M); 
+  cfg.prices.F=Number(id('prBaseF').value||DEFAULT_CFG.prices.F); 
+  await saveCfg(cfg); 
+});
+id('btnSaveCss').addEventListener('click', async ()=>{ 
+  const cfg = { ...localConfig }; 
+  cfg.customCSS = id('advCss').value||''; 
+  await saveCfg(cfg); 
+});
+
+/* Coupons CRUD */
+id('btnAddCoupon').addEventListener('click', async ()=>{
+  const code=(id('cpCode').value||'').trim(); const m=Number(id('cpM').value||0); const f=Number(id('cpF').value||0);
+  if(!code){ toast('Informe o código.'); return; }
+  if(m<=0 || f<=0){ toast('Preços do cupom devem ser > 0.'); return; }
+  
+  const cfg = { ...localConfig };
+  cfg.coupons = (cfg.coupons||[]);
+  const idx = cfg.coupons.findIndex(x=>x.code && x.code.trim().toLowerCase()===code.toLowerCase());
+  const obj = {code, M:m, F:f, active:true};
+  if(idx>=0) cfg.coupons[idx]=Object.assign(cfg.coupons[idx], obj);
+  else cfg.coupons.push(obj);
+  
+  await saveCfg(cfg); 
+  renderCoupons(cfg); 
+  toast('Cupom salvo.');
+  id('cpCode').value = ''; id('cpM').value = ''; id('cpF').value = '';
+});
+id('cpTable').addEventListener('click', async (e)=>{
+  const act=e.target?.dataset?.act; if(!act) return;
+  const idx=Number(e.target.dataset.idx);
+  
+  const cfg = { ...localConfig };
+  if(!cfg.coupons||!cfg.coupons[idx]) return;
+  
+  if(act==='del'){ 
+    if(confirm('Remover este cupom?')){ 
+      cfg.coupons.splice(idx,1); 
+      await saveCfg(cfg); 
+      renderCoupons(cfg); 
+    } 
+  }
+  if(act==='edit'){ 
+    const c=cfg.coupons[idx]; 
+    id('cpCode').value=c.code; 
+    id('cpM').value=c.M; 
+    id('cpF').value=c.F; 
+    toast('Cupom carregado no formulário para edição.'); 
+  }
+  if(act==='toggle'){ 
+    cfg.coupons[idx].active=!cfg.coupons[idx].active; 
+    await saveCfg(cfg); 
+    renderCoupons(cfg); 
+  }
+});
+
+/* Export / Import / Reset */
+id('btnExport').addEventListener('click',()=>{
+  const cfg = localConfig;
+  const blob=new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='config-bilhetes.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+});
+id('fileImport').addEventListener('change',(e)=>{
+  const f=e.target.files?.[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload= async ()=>{ 
+    try{ 
+      const cfg=JSON.parse(r.result); 
+      await saveCfg(cfg); 
+      await renderAll(); 
+      toast('Config importada.'); 
+    } catch { 
+      alert('JSON inválido.'); 
+    } 
+  };
+  r.readAsText(f);
+});
+id('btnReset').addEventListener('click', async ()=>{ 
+  if(confirm('Resetar para padrão? Isso salvará a configuração padrão na nuvem.')){ 
+    await saveCfg(DEFAULT_CFG); 
+    await renderAll(); 
+    toast('Padrão restaurado.'); 
+  }
+});
+
+/* Login binds */
+id('btnLogin').addEventListener('click', doLogin);
+id('btnVerify').addEventListener('click', verify2FA);
+id('btnConfirmSetup').addEventListener('click', confirmSetup2FA);
+id('btnCopySecret').addEventListener('click', copySecret);
+id('btnRegenSecret').addEventListener('click', regenSecret);
+id('btnBack1').addEventListener('click', ()=>{ id('twofa').style.display='none'; });
+id('btnBack2').addEventListener('click', ()=>{ id('setup').style.display='none'; });
+id('btnLogout').addEventListener('click', logout);
+
+/* Binds do Relatório de Vendas */
+async function refreshAllData() {
+  toast('Atualizando dados...');
+  await loadSales(); // Recarrega vendas do Firebase
+  renderSalesTable();
+  renderDashboard();
+  renderReport();
+  toast('Dados atualizados!');
+}
+
+id('filterInput').addEventListener('input', filterSalesTable);
+id('filterPromotora').addEventListener('change', filterSalesTable);
+id('btnRefreshSales').addEventListener('click', refreshAllData);
+id('btnExportFullCsv').addEventListener('click', exportFullCSV);
+id('btnClearSales').addEventListener('click', clearSales);
+// Binds do Modal
+id('salesTable').addEventListener('click', async e => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  
+  if (btn.classList.contains('btn-details')) {
+    const data = JSON.parse(btn.dataset.details.replace(/&apos;/g, "'"));
+    showDetailsModal(data);
+  }
+  
+  if (btn.classList.contains('btn-status')) {
+    const saleId = btn.dataset.id;
+    const newStatus = btn.dataset.status;
+    btn.disabled = true; // Desabilita botão para evitar clique duplo
+    await updateSaleStatus(saleId, newStatus);
+    await refreshAllData(); // Recarrega tudo
+  }
+});
+id('btnCloseDetails').addEventListener('click', hideDetailsModal);
+id('detailsBackdrop').addEventListener('click', e => {
+  if (e.target === id('detailsBackdrop')) hideDetailsModal();
+});
+
+
+/* Bootstrap */
+(function init(){
+  if(localStorage.getItem(ADMIN_FLAG)==='1'){ enter(); } else { showLogin(); }
+})();
+
+</script>
+</body>
+</html>
