@@ -142,4 +142,1063 @@
   h1#page-h1{ /* H1 principal da página */
     margin:18px 0 6px;font-size:clamp(26px,3.2vw,40px);font-weight:800;
     background:linear-gradient(90deg,var(--purple),#8f85ff,var(--blue));
-    -webkit-background-clip:text;background-clip:text;color
+    -webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.2px
+  }
+  .subtitle{color:var(--muted);max-width:740px;margin:0 auto}
+
+  .card{
+    background:linear-gradient(180deg,var(--panel),#141720 50%,var(--panel));
+    border:1px solid #222532;border-radius:var(--r);
+    box-shadow:0 10px 30px rgba(0,0,0,.35);padding:18px
+  }
+  .card h2{margin:4px 0 14px;font-size:18px}
+  .row{display:grid;gap:12px;grid-template-columns:1fr}
+  @media (min-width:560px){.row.two{grid-template-columns:1fr 1fr}}
+  .row.cupom-row { grid-template-columns: 1fr auto; align-items: flex-end; }
+  
+  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+  input[type=text],input[type=tel],input[type=password],input[type=number],select{
+    width:100%;padding:12px 14px;border-radius:10px;border:1px solid #2a2f3d;
+    background:var(--soft);color:var(--text);outline:none;transition:border .2s,box-shadow .2s
+  }
+  input::placeholder{color:#7b869a}
+  input:focus,select:focus{border-color:#3a4160;box-shadow:0 0 0 3px rgba(124,92,255,.15)}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;width:100%;gap:10px;
+    padding:14px 16px;border:0;border-radius:12px;color:#fff;
+    background:linear-gradient(135deg,var(--purple) 0%,var(--purple-d) 50%,var(--blue) 100%);font-weight:700;cursor:pointer;
+    box-shadow:0 10px 25px rgba(124,92,255,.35),inset 0 1px 0 rgba(255,255,255,.1);
+    transition:transform .08s ease, box-shadow .2s ease, filter .2s ease
+  }
+  .btn:hover{filter:brightness(1.05)}
+  .btn:active{transform:translateY(1px)}
+  .btn.secondary{background:linear-gradient(180deg,#2b3345,#22293a);color:#e6ebff}
+  .btn.success{background:linear-gradient(180deg,#18c964,#0fb05a)}
+  .btn.warn{background:linear-gradient(180deg,#f6a800,#de8b00)}
+  .btn.ghost{background:linear-gradient(180deg,#242a3a,#1d2333);color:#d9e7ff}
+  .btn.small{width:auto;padding:8px 12px;font-size:13px;border-radius:10px}
+  .btn:disabled{opacity:.6;cursor:not-allowed;filter:grayscale(.25)}
+  .help{font-size:12px;color:var(--muted);margin-top:6px}
+  .help.ok{color:var(--ok)} .help.err{color:var(--err)}
+
+  /* Wizard */
+  .wizard-header{margin:12px auto 20px;max-width:820px;position:relative;min-height:auto;overflow:hidden}
+  .wizard-steps{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:14px;flex-wrap:wrap}
+  .step-dot{display:flex;align-items:center;gap:8px}
+  .dot{width:12px;height:12px;border-radius:50%;background:#2e3350;border:1px solid #3c436a;box-shadow:0 0 0 0 rgba(124,92,255,.0);transition:all .25s ease}
+  .step-dot.active .dot{background:linear-gradient(90deg,var(--purple),var(--blue));box-shadow:0 0 12px rgba(124,92,255,.7)}
+  .step-dot span{font-size:12px;color:#9aa5b1}
+  .step-dot.active span{color:#d8ddff}
+  .progress-rail{height:6px;border-radius:999px;background:#1a1f32;border:1px solid #2b3150;overflow:hidden}
+  .progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--purple),var(--blue));transition:width .35s ease}
+
+  .grid{display:grid;gap:18px;grid-template-columns:1fr}
+  @media (min-width:920px){.grid.two-cols{grid-template-columns:1.15fr .85fr}}
+
+  .total{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:14px 16px;background:#12141b;border:1px solid #222532;border-radius:12px}
+  .total strong{font-size:20px}
+  .price-pill{display:inline-flex;gap:8px;align-items:center;padding:8px 10px;background:#11141b;border:1px dashed #2b2f3e;border-radius:999px;color:var(--muted);font-size:13px;margin-bottom:8px}
+  .price{color:var(--accent2);font-weight:700}
+  .center{text-align:center}
+
+  /* QR/PIX */
+  #qrcodeBox{background:#fff;border:1px solid #dfe3ea;border-radius:12px;padding:12px;display:grid;place-items:center;min-height:284px;margin-top:12px}
+  .pix-wrap{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:10px}
+  .pix-box{padding:12px 14px;background:#10131a;border:1px solid #222532;border-radius:10px;color:#cde8ff;font-family:ui-monospace,Menlo,Consolas,monospace}
+
+  /* Avisos */
+  .notice{
+    margin-top:14px;padding:12px 14px;border:1px dashed #5b3044;background:#1a1216;color:#ffd6df;border-radius:12px;font-size:13px
+  }
+  .notice strong{color:#ff9ab1}
+
+  /* Acompanhantes */
+  .comp-row{
+    display:grid;grid-template-columns:1fr 220px;gap:10px;
+    background:#11141b;border:1px solid #222532;border-radius:10px;
+    padding:10px;margin-top:10px
+  }
+  @media (max-width:560px){ .comp-row{grid-template-columns:1fr} }
+  .comp-row label{font-size:12px;color:#9aa5b1;margin:0 0 4px}
+  .comp-row input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2a2f3d;background:#1a1e29;color:#e9edf1}
+
+  /* Modal processando */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:999}
+  .modal{background:#16181f;border:1px solid #2a2f3d;border-radius:14px;max-width:420px;width:92%;padding:20px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  .spinner{width:40px;height:40px;border-radius:50%;border:4px solid #2b3345;border-top-color:#18c964;margin:10px auto 14px;animation:spin 0.9s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .progress-wrap{margin-top:10px;text-align:left}
+  .progress-bar{position:relative;height:10px;border-radius:999px;overflow:hidden;background:linear-gradient(180deg,#22273a,#1b2031);border:1px solid #2b3150}
+  .progress-fill-anim{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--purple),var(--purple-d));position:relative;overflow:hidden}
+  .progress-fill-anim::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,.25) 50%,transparent 100%);width:40%;transform:translateX(-100%);animation:shine 1.4s infinite}
+  @keyframes shine{from{transform:translateX(-100%)}to{transform:translateX(270%)}}
+
+  .pay-wait{margin-top:8px;padding:10px 12px;border:1px dashed #3a4160;border-radius:10px;background:#12141b;color:#cfe3ff;font-size:13px}
+  .whats-call{margin-top:10px;padding:12px 14px;border:1px solid #375b2a;background:#0d1a10;border-radius:10px;color:#b8f3c2;font-weight:700;text-align:center}
+
+  /* Toast */
+  .toast{position:fixed;left:50%;bottom:90px; /* Acima do rodapé fixo */
+    transform:translateX(-50%) translateY(20px);background:#1b2130;border:1px solid #2b3244;padding:10px 14px;border-radius:10px;color:#d9e7ff;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s; z-index: 1001;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* Transições wizard */
+  .wizard-content{position:relative;min-height:520px;overflow:hidden}
+  .step{display:none;opacity:0;transform:translateX(20px);transition:opacity .25s ease, transform .25s ease;position:absolute;inset:0;padding:4px}
+  .step.active{display:block;opacity:1;transform:translateX(0);position:relative;}
+  #step5{position:relative;}
+  
+  /* Botão Flutuante (NOVO) */
+  .fab-insta {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 990;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(180deg,#2b3345,#22293a);
+    padding: 10px 14px;
+    border-radius: 99px;
+    color: #e6ebff;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,.4);
+    transition: transform .2s ease-out;
+  }
+  .fab-insta:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+  }
+  .fab-insta img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--purple);
+  }
+  .fab-insta span {
+    display: block;
+  }
+  /* Esconde o texto em telas pequenas */
+  @media (max-width: 600px) {
+    .fab-insta span { display: none; }
+    .fab-insta { padding: 8px; }
+  }
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+<div class="confetti-container" id="confettiBox"></div>
+<div id="fireworks-container"></div>
+
+<div class="container">
+  <header>
+    <div class="logo-text">
+      <h1 id="slogan-hero-title">Bilheteria Online</h1>
+      <p id="slogan-hero-subtitle">Baile do RK</p>
+    </div>
+    
+    <h1 id="page-h1">Finalize seu ingresso com Pix em segundos</h1>
+    <p class="subtitle" id="page-subtitle">Wizard de 4 etapas • QR Pix com valor automático • Mensagem do WhatsApp com todos os nomes.</p>
+  </header>
+
+  <section id="wizard-header" class="wizard-header">
+    <div class="wizard-steps">
+      <div id="s1" class="step-dot active"><span class="dot"></span><span>Etapa 1: Seus dados</span></div>
+      <div id="s2" class="step-dot"><span class="dot"></span><span>Etapa 2: Ingressos</span></div>
+      <div id="s3" class="step-dot"><span class="dot"></span><span>Etapa 3: Acompanhantes</span></div>
+      <div id="s4" class="step-dot"><span class="dot"></span><span>Etapa 4: Pagamento</span></div>
+    </div>
+    <div class="progress-rail"><div id="progressFill" class="progress-fill" style="width:25%"></div></div>
+  </section>
+
+<div class="wizard-content">
+  <section id="step1" class="step active">
+    <div class="card">
+      <h2>Etapa 1: Seus dados</h2>
+      <div class="row two">
+        <div>
+          <label for="nome">Nome completo</label>
+          <input id="nome" type="text" placeholder="Seu nome e sobrenome" autocomplete="name" />
+        </div>
+        <div>
+          <label for="whats">WhatsApp <small style="color:#9aa5b1">(somente números)</small></label>
+          <input id="whats" type="tel" inputmode="numeric" pattern="\d+" placeholder="Ex.: 1199XXXXXXX (11 dígitos)" autocomplete="tel" />
+          <div id="whatsStatus" class="help">Ex.: <strong>1199XXXXXXX</strong> (11 dígitos)</div>
+        </div>
+      </div>
+
+      <div class="row two" style="margin-top:12px">
+        <div>
+          <label for="generoComprador">Seu gênero</label>
+          <select id="generoComprador">
+            <option value="">Selecione</option>
+            <option value="masculino">Masculino</option>
+            <option value="feminino">Feminino</option>
+          </select>
+        </div>
+        <div>
+          <label for="ingressoParaMim">Um dos ingressos é para você?</label>
+          <select id="ingressoParaMim">
+            <option value="">Selecione</option>
+            <option value="sim">Sim</option>
+            <option value="nao">Não (comprarei apenas para outros)</option>
+          </select>
+        </div>
+      </div>
+      
+      <hr style="border:0;border-top:1px solid #232736;margin:16px 0" />
+
+      <div class="row two">
+        <div>
+          <label for="instagramUser">Seu Instagram (opcional)</label>
+          <input id="instagramUser" type="text" placeholder="@seu.usuario" />
+          <div class="help">Ajuda na validação do pagamento.</div>
+        </div>
+        <div>
+          <label for="veioPromotora">Você veio de alguma promotora?</label>
+          <select id="veioPromotora">
+            <option value="">Selecione</option>
+            <option value="baile">Eu vim pelo baile</option>
+            <option value="sim">Sim, vim por uma promotora</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="row" style="margin-top:12px">
+        <div id="caixaPromotora" style="display:none;">
+          <label for="promotoraSelect">Selecione a promotora:</label>
+          <select id="promotoraSelect"></select>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:14px">
+        <button id="btnNext1" class="btn" type="button">Continuar para Ingressos</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="step2" class="step">
+    <div class="card">
+      <h2>Etapa 2: Ingressos</h2>
+      <div class="row two">
+        <div>
+          <div class="price-pill">Masculino • <span class="price" id="precoM-label">R$ 0,00</span></div>
+          <label for="qtdM">Quantidade</label>
+          <select id="qtdM"></select>
+        </div>
+        <div>
+          <div class="price-pill">Feminino • <span class="price" id="precoF-label">R$ 0,00</span></div>
+          <label for="qtdF">Quantidade</label>
+          <select id="qtdF"></select>
+        </div>
+      </div>
+
+      <div class="row cupom-row" style="margin-top:14px">
+        <div>
+          <label for="cupom">Código promocional (opcional)</label>
+          <input id="cupom" type="text" placeholder="Ex.: PRIMEIRO LOTE" />
+        </div>
+        <button id="btnApplyCoupon" class="btn small" type="button" style="width: auto;">Aplicar</button>
+      </div>
+      <div id="cupomMsg" class="help"></div>
+      <div id="cupomOk" class="ok-msg" style="display:none">✅ CUPOM ATIVADO COM SUCESSO!</div>
+      <div id="cupomErr" class="err-msg" style="display:none; margin-top: 6px;">❌ Cupom inválido.</div>
+
+
+      <div class="total"><span>Total a pagar</span><strong id="totalTxt">R$ 0,00</strong></div>
+
+      <div id="notice-1" class="notice">
+        </div>
+
+      <div class="row two" style="margin-top:14px">
+        <button id="btnPrev2" class="btn secondary" type="button">Voltar (Dados)</button>
+        <button id="btnNext2" class="btn" type="button">Continuar</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="step3" class="step">
+    <div class="card">
+      <h2>Etapa 3: Acompanhantes</h2>
+      <p class="help" id="companionsHelp">Informe os dados dos acompanhantes.</p>
+      
+      <div id="companionsListM"></div>
+      <div id="companionsListF"></div>
+      
+      <div id="companionsHint" class="help" style="margin-top:8px">Dica: Seu próprio nome e WhatsApp já foram informados na Etapa 1.</div>
+      
+      <div class="row two" style="margin-top:14px">
+        <button id="btnPrev3" class="btn secondary" type="button">Voltar (Ingressos)</button>
+        <button id="btnNext3" class="btn" type="button">Continuar para Pagamento</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="step4" class="step">
+    <div class="card">
+      <h2 class="center">Etapa 4: Pagamento por Pix</h2>
+      <div id="qrcodeBox"><div id="qrcode" aria-live="polite"></div></div>
+      <div class="pix-wrap">
+        <div class="pix-box"><strong>Código Pix (copia e cola)</strong>: gere o QR para copiar com valor.</div>
+        <button id="btnCopyPixCode" class="btn small secondary" type="button">Copiar código Pix</button>
+        <button id="btnOpenBank" class="btn small warn" type="button">Vou pagar agora</button>
+        <button id="btnPaid" class="btn small success" type="button" disabled>Já paguei</button>
+        <button id="btnSaveQR" class="btn small secondary" type="button" disabled>Baixar QR como imagem</button>
+      </div>
+      <div id="payWait" class="pay-wait" style="display:none"></div>
+      <div id="whatsCall" class="whats-call" style="display:none">PAGAMENTO CONFIRMADO!<br>POR FAVOR, ENVIE O COMPROVANTE NO WHATSAPP</div>
+
+      <div class="row two" style="margin-top:14px">
+        <button id="btnGerar" class="btn" type="button">Calcular &amp; Gerar QR Code</button>
+        <button id="btnWhats" class="btn secondary" type="button" disabled>Enviar Comprovante via WhatsApp</button>
+      </div>
+      
+      <div class="row" style="margin-top:14px">
+         <button id="btnPrev4" class="btn ghost" type="button" style="width: 100%;">Voltar</button>
+      </div>
+
+      <div id="notice-2" class="notice">
+        </div>
+    </div>
+  </section>
+
+  <section id="step5" class="step">
+    <div class="card">
+      <h2 id="thanks-title">🎉 Obrigado pela compra!</h2>
+      <p id="thanks-text" class="help" style="font-size:14px">
+        </p>
+
+      <div class="notice">
+        <strong>Reforçando:</strong> não há devolução de valor. Certifique-se de estar disponível na data do evento.
+      </div>
+
+      <div class="row two" style="margin-top:14px">
+        <a href="./" class="btn" style="text-decoration:none;text-align:center">Voltar à página inicial</a>
+        <a href="#" id="btnInstaThanks" class="btn secondary" style="text-decoration:none;text-align:center" target="_blank" rel="noopener">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+          Seguir o baile
+        </a>
+      </div>
+    </div>
+  </section>
+</div> </div> <a id="fab-insta-link" href="#" class="fab-insta" target="_blank" rel="noopener">
+  <img id="fab-insta-img" src="" alt="Logo Baile do RK">
+  <span>Siga-nos no Instagram</span>
+</a>
+
+
+<div id="processing" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="procTitle" aria-describedby="procDesc">
+  <div class="modal">
+    <div class="spinner" aria-hidden="true"></div>
+    <h3 id="procTitle" style="margin:0 0 6px">Estamos processando seu pagamento…</h3>
+    <p id="procDesc" style="margin:0;color:#9aa5b1">Isso leva poucos segundos.</p>
+    <div class="progress-wrap"><div class="progress-bar"><div id="progressFill2" class="progress-fill-anim"></div></div></div>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== Config Firebase (ATUALIZADO) ===== */
+const firebaseConfig = {
+  apiKey: "AIzaSyDbblpUh93x0CUOquVCt_fqPjDoE8515Ao",
+  authDomain: "bilheteria-rk.firebaseapp.com",
+  projectId: "bilheteria-rk",
+  storageBucket: "bilheteria-rk.firebasestorage.app",
+  messagingSenderId: "853871836419",
+  appId: "1:853871836419:web:0cf543e0f511aa92a8bd36"
+};
+
+// Inicializa Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const configRef = db.collection('config').doc('site');
+const salesRef = db.collection('sales');
+
+/* ===== Config Padrão (Fallback) ===== */
+// Usado apenas se o Firebase estiver offline ou vazio
+const DEFAULT_CFG = {
+  theme:{ 
+    primary:'#7c5cff', 
+    secondary:'#3ca6ff', 
+    tertiary: '#ff6b6b',
+    radius:14,
+    fabImage: 'https://bailedork.github.io/ingressos/logo-baile.jpg.jpeg' // <-- LOGO ATUALIZADA
+  },
+  texts:{
+    heroTitle:'Bilheteria Online',
+    heroSubtitle:'Baile do RK',
+    pageTitle:'Finalize seu ingresso com Pix em segundos',
+    pageSubtitle:'Wizard de 4 etapas • QR Pix com valor automático • Mensagem do WhatsApp com todos os nomes.',
+    noticeImportant:'<strong>Importante:</strong><br>• <strong>Não haverá devolução de valor.</strong> Só compre o ingresso se tiver total certeza de que vai comparecer ao evento.<br>• A <strong>localização e demais informações</strong> serão divulgadas no <strong>grupo exclusivo dos compradores</strong> após a confirmação do pagamento.',
+    noticePayment:'<strong>Importante:</strong><br>• <strong>Não haverá devolução de valor.</strong><br>• A <strong>localização e informações oficiais</strong> serão divulgadas apenas no <strong>grupo exclusivo dos compradores</strong> após a confirmação do pagamento.',
+    thanksTitle:'🎉 Obrigado pela compra!',
+    thanksText:'Recebemos sua confirmação. Agora é só <strong>enviar o comprovante</strong> no WhatsApp (já abrimos em outra guia para você). Assim que validarmos, você será adicionado ao <strong>grupo exclusivo dos compradores</strong>, onde divulgaremos a <strong>localização e todas as informações oficiais</strong> do evento.'
+  },
+  payment:{ 
+    pixKey: 'bailedork2025@gmail.com', // <-- SEU DADO CORRIGIDO
+    merchant: 'RICARDO WILLYSMAR PEREIRA', // <-- SEU DADO CORRIGIDO (25 Chars)
+    city: 'RECIFE', // <-- SEU DADO CORRIGIDO
+    whatsapp:'+5581991405977',
+    instagram: 'https://instagram.com/bailedork'
+  },
+  prices:{ M:25, F:15 },
+  coupons:[ 
+    { code:'PRIMEIRO LOTE', M:20, F:10, active:true },
+    { code:'testerk', M:0.01, F:0.01, active:true },
+    { code:'TESTE RK', M:0.01, F:0.01, active:true }
+  ],
+  promotoras: [
+    "Larissa / Lari","Samara / Mara","Yasmim / Paris","Isa","Adriane / Drih",
+    "Ketlyn / Keu","Kaylane / Kayh","Yasmim Lima","Vivian","Bianca"
+  ],
+  customCSS:''
+};
+
+
+/* ===== Carregador de Configuração (NOVO) ===== */
+let CONFIG = DEFAULT_CFG; // Começa com o padrão
+let PIX_KEY    = CONFIG.payment.pixKey;
+let MERCHANT   = CONFIG.payment.merchant;
+let CITY       = CONFIG.payment.city;
+let WHATS_DEST = CONFIG.payment.whatsapp;
+
+async function fetchConfig() {
+  try {
+    const doc = await configRef.get();
+    if (doc.exists) {
+      CONFIG = doc.data(); // Sobrescreve o padrão com os dados da nuvem
+      // Atualiza variáveis globais de pagamento
+      PIX_KEY    = CONFIG.payment.pixKey;
+      MERCHANT   = CONFIG.payment.merchant;
+      CITY       = CONFIG.payment.city;
+      WHATS_DEST = CONFIG.payment.whatsapp;
+    } else {
+      console.warn("Documento de configuração não encontrado no Firebase. Usando padrão.");
+    }
+  } catch(err) {
+    console.error("Erro ao buscar config do Firebase. Usando padrão.", err);
+    toast("Erro ao carregar configurações. Tente recarregar.");
+  }
+}
+
+
+/* ===== Utils ===== */
+const BRL = n => (n || 0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const onlyDigits = s => (s||'').replace(/\D+/g,'');
+const id = q => document.getElementById(q);
+function toast(msg){ const t=id('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1800); }
+
+/* ===== Dados do formulário (persistidos entre etapas) ===== */
+let formData = {
+  nome: '',
+  whats: '',
+  genero: '',
+  ingressoParaMim: '',
+  instagramUser: '',
+  promotora: 'Nenhuma'
+};
+let lastEmv = ''; let lastTxid = ''; let lastWhatsURL = '';
+let waitTimer = null; let waitRemaining = 0; let waitStarted = false;
+
+/* ===== Preenche selects 0..10 ===== */
+(function(){ ['qtdM','qtdF'].forEach(k=>{ const el=id(k); for(let i=0;i<=10;i++){ const o=document.createElement('option'); o.value=String(i); o.textContent=i; el.appendChild(o);} }); })();
+
+/* ===== Validação WhatsApp ===== */
+function quickPhoneValidate(raw){
+  const dig = onlyDigits(raw || '');
+  if(dig.length !== 11) return {valid:false, msg:'Use 11 dígitos (DDD + 9 + número).'};
+  const ddd = parseInt(dig.slice(0,2),10);
+  if(isNaN(ddd) || ddd < 11 || ddd > 99) return {valid:false, msg:'DDD inválido (11 a 99).'};
+  if(dig[2] !== '9') return {valid:false, msg:'Após o DDD, o número deve começar com 9.'};
+  return {valid:true, msg:'Número válido.'};
+}
+function updatePhoneHint(){ const st = id('whatsStatus'); const v = quickPhoneValidate(id('whats').value); st.textContent = v.msg; st.classList.remove('ok','err'); st.classList.add(v.valid ? 'ok' : 'err'); }
+
+/* ===== Cupom & Preços (DINÂMICO) ===== */
+let activeCoupon = null;
+function applyCoupon() {
+  const v = (id('cupom').value||'').trim().toLowerCase();
+  const btn = id('btnApplyCoupon');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = 'Validando...';
+  btn.disabled = true;
+  
+  id('cupomOk').style.display = 'none';
+  id('cupomErr').style.display = 'none';
+  
+  setTimeout(() => {
+    activeCoupon = CONFIG.coupons.find(c => c.active && c.code.toLowerCase() === v);
+    
+    const pM = activeCoupon ? activeCoupon.M : CONFIG.prices.M;
+    const pF = activeCoupon ? activeCoupon.F : CONFIG.prices.F;
+
+    id('precoM-label').textContent = BRL(pM);
+    id('precoF-label').textContent = BRL(pF);
+    computeTotal();
+
+    if(activeCoupon){
+      id('cupomMsg').textContent = 'Cupom aplicado! Preços promocionais ativos.';
+      id('cupomOk').style.display = 'block';
+    } else {
+      id('cupomMsg').textContent = 'Insira um cupom se possuir.';
+      if (v) id('cupomErr').style.display = 'block';
+    }
+    
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }, 3000); // Delay de 3 segundos
+}
+
+function resetPrices() {
+  activeCoupon = null;
+  id('precoM-label').textContent = BRL(CONFIG.prices.M);
+  id('precoF-label').textContent = BRL(CONFIG.prices.F);
+  computeTotal();
+}
+
+/* ===== Total (DINÂMICO) ===== */
+function computeTotal(){
+  const pM = activeCoupon ? activeCoupon.M : CONFIG.prices.M;
+  const pF = activeCoupon ? activeCoupon.F : CONFIG.prices.F;
+  
+  const qM=Number(id('qtdM').value)||0; const qF=Number(id('qtdF').value)||0;
+  const total=qM*pM+qF*pF; 
+  id('totalTxt').textContent=BRL(total);
+  return {qM,qF,pM,pF,total};
+}
+
+/* ===== Validações de Etapa ===== */
+function validateStep1(){
+  formData.nome = id('nome').value.trim();
+  const whatsRaw = id('whats').value;
+  const phone = quickPhoneValidate(whatsRaw);
+  
+  formData.genero = id('generoComprador').value;
+  formData.ingressoParaMim = id('ingressoParaMim').value;
+  formData.instagramUser = id('instagramUser').value.trim();
+  
+  const veioProm = id('veioPromotora')?.value;
+  // ATUALIZADO AQUI
+  if (veioProm === 'sim') {
+    formData.promotora = (id('promotoraSelect')?.value||'').trim();
+  } else if (veioProm === 'baile') {
+    formData.promotora = 'Eu vim pelo baile';
+  } else {
+    formData.promotora = 'Nenhuma';
+  }
+
+  if(!formData.nome){ alert('Informe seu nome completo.'); return false; }
+  if(!phone.valid){ alert('WhatsApp inválido: '+phone.msg); return false; }
+  if(!formData.genero){ alert('Selecione seu gênero.'); return false; }
+  if(!formData.ingressoParaMim){ alert('Informe se um dos ingressos é para você.'); return false; }
+
+  // ATUALIZADO AQUI
+  if(veioProm === 'sim' && !formData.promotora) {
+    alert('Por favor, selecione a promotora.'); return false;
+  }
+  if (!veioProm) {
+     alert('Por favor, informe como você veio (pelo baile ou promotora).'); return false;
+  }
+  
+  formData.whats = onlyDigits(whatsRaw);
+  return true;
+}
+
+function validateStep2(){
+  const {qM, qF, total}=computeTotal();
+  
+  // Validação de Gênero vs Ingresso
+  if (formData.ingressoParaMim === 'sim' && formData.genero === 'masculino' && qM < 1) {
+    alert('Você indicou que o ingresso é para você (Masculino), mas não selecionou nenhum ingresso Masculino.'); 
+    return false;
+  }
+  if (formData.ingressoParaMim === 'sim' && formData.genero === 'feminino' && qF < 1) {
+    alert('Você indicou que o ingresso é para você (Feminino), mas não selecionou nenhum ingresso Feminino.'); 
+    return false;
+  }
+  
+  if(total<=0){ alert('Selecione ao menos 1 ingresso.'); return false; }
+  return true;
+}
+
+/* ===== Pix EMV ===== */
+function tlv(id2, value){ const len=String(value.length).padStart(2,'0'); return id2+len+value; }
+function crc16(payload){ let crc=0xFFFF; for(let i=0;i<payload.length;i++){ crc ^= payload.charCodeAt(i) << 8; for(let j=0;j<8;j++){ crc = (crc & 0x8000) ? ((crc<<1)^0x1021) : (crc<<1); crc &= 0xFFFF; } } return crc.toString(16).toUpperCase().padStart(4,'0'); }
+function buildPixEMV({pixKey, merchantName, merchantCity, amount, txid, description}){
+  // Validação CRÍTICA para evitar erro no banco
+  if (!pixKey || !merchantName || !merchantCity) {
+    alert('Erro: O administrador do site não configurou os dados de pagamento PIX corretamente.');
+    return null;
+  }
+  merchantName=(merchantName||'').toUpperCase().substring(0,25); merchantCity=(merchantCity||'').toUpperCase().substring(0,15);
+  const gui = tlv('00','br.gov.bcb.pix'); const key = tlv('01', pixKey); const desc= description ? tlv('02', description.substring(0,50)) : '';
+  const mai = tlv('26', gui + key + desc); const mcc = tlv('52','0000'); const curr= tlv('53','986');
+  const amt = tlv('54', Number(amount).toFixed(2)); const ctry= tlv('58','BR'); const name= tlv('59', merchantName); const city= tlv('60', merchantCity);
+  const adt = tlv('62', tlv('05', txid)); const base = tlv('00','01') + tlv('01','12') + mai + mcc + curr + amt + ctry + name + city + adt + '6304';
+  return base + crc16(base);
+}
+
+/* ===== Acompanhantes (LÓGICA ATUALIZADA) ===== */
+function getNeededCompanions() {
+  let {qM, qF} = computeTotal();
+  
+  // Se o ingresso é para o comprador, subtrai 1 do gênero correspondente
+  if (formData.ingressoParaMim === 'sim') {
+    if (formData.genero === 'masculino') {
+      qM = Math.max(0, qM - 1);
+    } else if (formData.genero === 'feminino') {
+      qF = Math.max(0, qF - 1);
+    }
+  }
+  
+  return { companionsM: qM, companionsF: qF, total: qM + qF };
+}
+
+function buildCompanionRow(i, gender){
+  const wrap = document.createElement('div');
+  wrap.className = 'comp-row';
+  const genderLabel = gender === 'M' ? 'Masculino' : 'Feminino';
+  wrap.innerHTML = `
+    <div>
+      <label for="compName_${gender}_${i}">Acompanhante #${i} (${genderLabel})</label>
+      <input id="compName_${gender}_${i}" type="text" placeholder="Nome completo do acompanhante">
+    </div>
+    <div>
+      <label for="compWhats_${gender}_${i}">WhatsApp (11 dígitos)</label>
+      <input id="compWhats_${gender}_${i}" type="tel" inputmode="numeric" placeholder="Ex.: 1199XXXXXXX">
+    </div>`;
+  const tel = wrap.querySelector(`#compWhats_${gender}_${i}`);
+  tel.addEventListener('input', e=>{ e.target.value = (e.target.value||'').replace(/\D+/g,'').slice(0,11); });
+  return wrap;
+}
+function updateCompanionsUI(){
+  const listM = id('companionsListM');
+  const listF = id('companionsListF');
+  const help = id('companionsHelp');
+  const hint = id('companionsHint');
+  
+  const { companionsM, companionsF, total } = getNeededCompanions();
+  
+  listM.innerHTML = '';
+  listF.innerHTML = '';
+  
+  if (total > 0) {
+    if (companionsM > 0) {
+      listM.innerHTML = `<h4 style="margin: 15px 0 5px 0;">Acompanhante(s) Masculino(s)</h4>`;
+      for(let i=1;i<=companionsM;i++){ listM.appendChild(buildCompanionRow(i, 'M')); }
+    }
+    if (companionsF > 0) {
+      listF.innerHTML = `<h4 style="margin: 15px 0 5px 0;">Acompanhante(s) Feminino(s)</h4>`;
+      for(let i=1;i<=companionsF;i++){ listF.appendChild(buildCompanionRow(i, 'F')); }
+    }
+    help.textContent = `Você precisa informar os dados de ${total} ${total === 1 ? 'acompanhante' : 'acompanhantes'}.`;
+  } else {
+     help.textContent = 'Você selecionou 1 ingresso apenas para você. Nenhum acompanhante é necessário.';
+  }
+  
+  // Esconde a "Dica" se o ingresso não for para o comprador
+  hint.style.display = (formData.ingressoParaMim === 'sim') ? 'block' : 'none';
+}
+function collectCompanions(){
+  const { companionsM, companionsF } = getNeededCompanions();
+  const arr = [];
+  
+  for(let i=1;i<=companionsM;i++){
+    const name = (id(`compName_M_${i}`)?.value || '').trim();
+    const whats = (id(`compWhats_M_${i}`)?.value || '').replace(/\D+/g,'');
+    arr.push({name, whats, gender: 'Masculino'});
+  }
+  for(let i=1;i<=companionsF;i++){
+    const name = (id(`compName_F_${i}`)?.value || '').trim();
+    const whats = (id(`compWhats_F_${i}`)?.value || '').replace(/\D+/g,'');
+    arr.push({name, whats, gender: 'Feminino'});
+  }
+  return arr;
+}
+function validateCompanions(){
+  const { companionsM, companionsF, total } = getNeededCompanions();
+  if (total < 1) return true; // Nenhum acompanhante necessário
+
+  const comps = collectCompanions();
+  if(comps.length !== total){ alert('Preencha os dados dos acompanhantes.'); return false; }
+  
+  // Validação individual
+  for(let i=1;i<=companionsM;i++){
+    if(!(id(`compName_M_${i}`)?.value || '').trim()){ alert(`Informe o nome do Acompanhante #${i} (Masculino).`); return false; }
+    const w = (id(`compWhats_M_${i}`)?.value || '').replace(/\D+/g,'');
+    if(w.length !== 11){ alert(`WhatsApp do Acompanhante #${i} (Masculino) deve ter 11 dígitos.`); return false; }
+  }
+  for(let i=1;i<=companionsF;i++){
+    if(!(id(`compName_F_${i}`)?.value || '').trim()){ alert(`Informe o nome do Acompanhante #${i} (Feminino).`); return false; }
+    const w = (id(`compWhats_F_${i}`)?.value || '').replace(/\D+/g,'');
+    if(w.length !== 11){ alert(`WhatsApp do Acompanhante #${i} (Feminino) deve ter 11 dígitos.`); return false; }
+  }
+  return true;
+}
+
+/* ===== Estados de pagamento/timers ===== */
+const mmss = s => `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+function startPayWait(){
+  if (waitStarted && waitRemaining > 0) return;
+  waitRemaining = Math.floor(30 + Math.random()*31); waitStarted = true;
+  id('btnPaid').disabled = true; id('payWait').style.display = 'block';
+  id('payWait').textContent = `Aguarde cerca de ${waitRemaining}s para concluir o pagamento… (${mmss(waitRemaining)})`;
+  if (waitTimer) clearInterval(waitTimer);
+  waitTimer = setInterval(()=>{
+    waitRemaining--;
+    if(waitRemaining<=0){
+      clearInterval(waitTimer);
+      id('btnPaid').disabled = false; id('payWait').style.display = 'none'; toast('Você já pode clicar em “Já paguei”.');
+    }else{
+      id('payWait').textContent = `Aguarde cerca de ${waitRemaining}s para concluir o pagamento… (${mmss(waitRemaining)})`;
+    }
+  },1000);
+}
+
+/* ===== QR + Código Pix ===== */
+function gerarQR(){
+  if(!validateStep2()) return;
+  if(!validateCompanions()) return;
+  
+  const {total}=computeTotal();
+  lastTxid = ('RK' + Date.now()).substring(0,25);
+  lastEmv  = buildPixEMV({ pixKey:PIX_KEY, merchantName:MERCHANT, merchantCity:CITY, amount:total, txid:lastTxid, description:'Baile do RK' });
+  
+  if (!lastEmv) return; // Erro na config do PIX
+  
+  id('qrcode').innerHTML=''; new QRCode(id('qrcode'), { text:lastEmv, width:280, height:280, colorDark:'#000', colorLight:'#fff', correctLevel:QRCode.CorrectLevel.M });
+  setTimeout(()=>{ id('btnSaveQR').disabled = !id('qrcode').querySelector('img,canvas'); }, 80);
+  id('btnPaid').disabled = true; id('btnWhats').disabled = true; id('whatsCall').style.display = 'none';
+  if (waitTimer){ clearInterval(waitTimer); waitTimer=null; } id('payWait').style.display = 'none'; waitStarted = false;
+  toast('QR gerado. Confira o valor e prossiga.');
+}
+async function copiarCodigoPix(){
+  if(!lastEmv){
+    if(!validateStep2()) return;
+    if(!validateCompanions()) return;
+    const {total}=computeTotal();
+    lastTxid=('RK'+Date.now()).substring(0,25);
+    lastEmv = buildPixEMV({pixKey:PIX_KEY, merchantName:MERCHANT, merchantCity:CITY, amount:total, txid:lastTxid, description:'Baile do RK'});
+    if (!lastEmv) return; // Erro na config do PIX
+  }
+  try{
+    if(navigator.clipboard && (location.protocol==='https:' || location.hostname==='localhost')){ await navigator.clipboard.writeText(lastEmv); }
+    else{ const ta=document.createElement('textarea'); ta.value=lastEmv; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+    toast('Código Pix copiado!'); startPayWait();
+  }catch{ alert('Não foi possível copiar. Tente gerar o QR novamente.'); }
+}
+function abrirBanco(){
+  if(!lastEmv){ try{ gerarQR(); }catch(e){} } startPayWait();
+  const overlay = document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9999';
+  overlay.innerHTML = `
+    <div style="background:#16181f;border:1px solid #2a2f3d;border-radius:14px;max-width:420px;width:92%;padding:20px 18px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)">
+      <h3 style="margin:0 0 8px">Você pode pagar com segurança</h3>
+      <p style="color:#9aa5b1;font-size:14px;margin:0 0 14px">
+        Agora você pode sair deste site e abrir o app do seu banco para efetuar o Pix.
+        Continuaremos aguardando seu pagamento.
+      </p>
+      <button id="btnFecharAviso" class="btn small secondary" type="button" style="width:auto">Entendi</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector('#btnFecharAviso').onclick = () => overlay.remove();
+}
+function baixarQR(){
+  const box=id('qrcode'); const img=box.querySelector('img'); const canvas=box.querySelector('canvas');
+  let url=''; if(img&&img.src) url=img.src; else if(canvas) url=canvas.toDataURL('image/png'); else { alert('Gere o QR primeiro.'); return; }
+  const a=document.createElement('a'); a.href=url; a.download='qr-baile-do-rk.png'; document.body.appendChild(a); a.click(); a.remove();
+}
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden'){ return; } if(lastEmv && !waitStarted){ startPayWait(); } });
+
+/* ===== Modal 5s ===== */
+function startModalProgress(durationMs=5000){
+  const modal = id('processing'); const fill = id('progressFill2'); fill.style.width = '0%'; modal.style.display = 'flex';
+  const start = performance.now();
+  function step(now){
+    const p = Math.min((now - start) / durationMs, 1); fill.style.width = (p*100).toFixed(2) + '%';
+    if(p < 1) requestAnimationFrame(step);
+    else { modal.style.display = 'none'; id('btnWhats').disabled = false; id('whatsCall').style.display = 'block'; id('whatsCall').scrollIntoView({behavior:'smooth', block:'center'}); toast('Pagamento confirmado! Por favor, enviar comprovante no WhatsApp.'); }
+  }
+  requestAnimationFrame(step);
+}
+function confirmarPagamento(){ 
+  if (id('btnPaid').disabled) return; 
+  launchFireworks(); // NOVO: Lança fogos ao clicar em "Já paguei"
+  startModalProgress(5000); 
+}
+
+/* ===== Vendas (Firebase) ===== */
+async function enviarWhats(){
+  if(id('btnWhats').disabled) return;
+  const p = computeTotal();
+  const companions = collectCompanions();
+  
+  const linesComp = companions.length 
+    ? ['Acompanhantes:'].concat(companions.map((c,i)=>`• ${c.gender} #${i+1}: ${c.name} — +55 ${c.whats}`)) 
+    : ['Acompanhantes: (nenhum)'];
+
+  // Salva a venda no Firebase
+  try {
+    await salesRef.add({
+      ts: firebase.firestore.FieldValue.serverTimestamp(), // Usa a hora do servidor
+      nome: formData.nome, 
+      whats: formData.whats, 
+      qM: p.qM, 
+      qF: p.qF, 
+      total: p.total, 
+      promotora: formData.promotora, 
+      genero: formData.genero,
+      ingressoParaMim: formData.ingressoParaMim,
+      instagram: formData.instagramUser,
+      companions: companions,
+      status: 'pending' // Status inicial
+    });
+  } catch (err) {
+    console.error("Erro ao salvar venda: ", err);
+    alert("Houve um erro ao salvar sua venda. Tente novamente.");
+    return;
+  }
+
+  const msg=[
+    'Comprovante – Bilheteria Online – Baile do RK','--------------------------------',
+    `Comprador: ${formData.nome}`,
+    `WhatsApp do comprador: +55 ${formData.whats}`,
+    `Gênero do Comprador: ${formData.genero === 'masculino' ? 'Masculino' : 'Feminino'}`,
+    `Ingresso para o comprador: ${formData.ingressoParaMim === 'sim' ? 'Sim' : 'Não'}`,
+    `Instagram: ${formData.instagramUser || '(não informado)'}`,'',
+    `Promotora: ${formData.promotora}`,'',
+    'Ingressos:',
+    `• Masculino: ${p.qM} (cada ${BRL(p.pM)})`,
+    `• Feminino: ${p.qF} (cada ${BRL(p.pF)})`,'',
+    ...linesComp,'',
+    `Total pago: ${BRL(p.total)}`,'',
+    '⚠️ Importante: Não haverá devolução de valor. Localização e demais informações serão divulgadas apenas no grupo exclusivo dos compradores após a confirmação do pagamento.','',
+    'Código Pix (copia e cola):', lastEmv ? lastEmv : '(gerar no site)'
+  ].join('\n');
+
+  const url = 'https://wa.me/' + encodeURIComponent(WHATS_DEST) + '?text=' + encodeURIComponent(msg);
+  lastWhatsURL = url;
+
+  window.open(url, '_blank', 'noopener');
+  setStep(5); // Avança para a tela final
+}
+
+
+/* ===== Wizard (LÓGICA ATUALIZADA) ===== */
+function setStep(n){
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.step-dot').forEach(d => d.classList.remove('active'));
+  
+  const pfill = id('progressFill');
+  const header = id('wizard-header');
+  
+  if(n===1){ 
+    id('step1').classList.add('active'); 
+    id('s1').classList.add('active'); 
+    pfill.style.width='25%'; 
+    header.style.display='block';
+  }
+  else if(n===2){ 
+    id('step2').classList.add('active'); 
+    [id('s1'), id('s2')].forEach(s=>s.classList.add('active'));
+    pfill.style.width='50%'; 
+    header.style.display='block';
+  }
+  else if(n===3){ 
+    id('step3').classList.add('active');
+    updateCompanionsUI();
+    [id('s1'), id('s2'), id('s3')].forEach(s=>s.classList.add('active'));
+    pfill.style.width='75%'; 
+    header.style.display='block';
+  }
+  else if(n===4){ 
+    id('step4').classList.add('active');
+    [id('s1'), id('s2'), id('s3'), id('s4')].forEach(s=>s.classList.add('active'));
+    pfill.style.width='100%'; 
+    header.style.display='block';
+    gerarQR();
+  }
+  else if(n===5) { 
+    id('step5').classList.add('active'); 
+    header.style.display='none';
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ===== APLICA CONFIGURAÇÃO DINÂMICA ===== */
+function applyConfig(cfg) {
+  // 1. Tema
+  const R = document.documentElement.style;
+  const p = cfg.theme.primary;
+  const s = cfg.theme.secondary;
+  const t = cfg.theme.tertiary;
+  R.setProperty('--accent', p);
+  R.setProperty('--purple', p);
+  R.setProperty('--blue', s);
+  R.setProperty('--accent2', s);
+  R.setProperty('--tertiary', t);
+  R.setProperty('--r', cfg.theme.radius + 'px');
+  // Converte Hex para RGB para os brilhos
+  const hexToRGB = hex => {
+    try {
+      const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+      return `${r}, ${g}, ${b}`;
+    } catch(e) { return '124, 92, 255'; } // Fallback
+  };
+  R.setProperty('--purple-rgb', hexToRGB(p));
+  R.setProperty('--blue-rgb', hexToRGB(s));
+  
+  // 2. Textos (Títulos do Header 3D e da Página)
+  id('slogan-hero-title').textContent = cfg.texts.heroTitle;
+  id('slogan-hero-subtitle').textContent = cfg.texts.heroSubtitle;
+  id('page-h1').textContent = cfg.texts.pageTitle;
+  id('page-subtitle').textContent = cfg.texts.pageSubtitle;
+  id('notice-1').innerHTML = cfg.texts.noticeImportant;
+  id('notice-2').innerHTML = cfg.texts.noticePayment;
+  id('thanks-title').textContent = cfg.texts.thanksTitle;
+  id('thanks-text').innerHTML = cfg.texts.thanksText;
+
+  // 3. Promotoras
+  const select = id('promotoraSelect');
+  const list = cfg.promotoras || [];
+  select.innerHTML = '<option value="">Selecione</option>' + list.map(p=>`<option value="${p}">${p}</option>`).join('');
+
+  // 4. Links do Instagram (Botão Flutuante e Botão de Agradecimento)
+  const instaLink = cfg.payment.instagram || '#';
+  const fabImg = cfg.theme.fabImage || '';
+  
+  const fabLink = id('fab-insta-link');
+  const fabImgEl = id('fab-insta-img');
+  const thanksBtn = id('btnInstaThanks');
+  
+  fabLink.href = instaLink;
+  thanksBtn.href = instaLink;
+  
+  if (fabImg) {
+    fabImgEl.src = fabImg;
+  } else {
+    fabLink.style.display = 'none'; // Esconde se não houver imagem
+  }
+  if (!instaLink || instaLink === '#') {
+    fabLink.style.display = 'none';
+    thanksBtn.style.display = 'none';
+  }
+  
+  // 5. CSS Customizado
+  if (cfg.customCSS) {
+    const styleEl = document.createElement('style');
+    styleEl.textContent = cfg.customCSS;
+    document.head.appendChild(styleEl);
+  }
+}
+
+/* ===== GERA ANIMAÇÕES ===== */
+function createConfetti() {
+  const box = id('confettiBox');
+  if (!box) return;
+  let html = '';
+  for (let i = 0; i < 30; i++) { // 30 partículas
+    const style = `
+      left: ${Math.random() * 100}vw;
+      animation-delay: ${Math.random() * -10}s;
+      animation-duration: ${5 + Math.random() * 5}s;
+      width: ${5 + Math.random() * 5}px;
+      height: ${5 + Math.random() * 5}px;
+      opacity: ${Math.random()};
+    `;
+    html += `<i class="confetti" style="${style}"></i>`;
+  }
+  box.innerHTML = html;
+}
+
+function launchFireworks() {
+  const container = id('fireworks-container');
+  container.style.display = 'block';
+  container.innerHTML = ''; // Limpa fogos anteriores
+  
+  // Cria uma "explosão"
+  for (let i = 0; i < 50; i++) { // 50 partículas
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const x = window.innerWidth / 2;
+    const y = window.innerHeight / 2;
+    const angle = Math.random() * 360;
+    const radius = Math.random() * 150 + 50;
+    const endX = x + radius * Math.cos(angle * Math.PI / 180);
+    const endY = y + radius * Math.sin(angle * Math.PI / 180);
+    
+    p.style.left = `${x}px`;
+    p.style.top = `${y}px`;
+    p.style.width = `${Math.random() * 5 + 2}px`;
+    p.style.height = p.style.width;
+    p.style.setProperty('--transform-end', `translate(${endX - x}px, ${endY - y}px)`);
+    container.appendChild(p);
+  }
+  
+  // Esconde o container após a animação
+  setTimeout(() => {
+    container.style.display = 'none';
+  }, 1000);
+}
+
+/* ===== Listeners Principais ===== */
+id('veioPromotora').addEventListener('change',()=>{
+  const caixa = id('caixaPromotora');
+  if(id('veioPromotora').value==='sim'){caixa.style.display='block';}
+  else{caixa.style.display='none';}
+});
+// Cupom
+id('cupom').addEventListener('input', ()=>{ resetPrices(); });
+id('btnApplyCoupon').addEventListener('click', applyCoupon);
+// Quantidade
+id('qtdM').addEventListener('change', ()=>{ computeTotal(); });
+id('qtdF').addEventListener('change', ()=>{ computeTotal(); });
+// WhatsApp
+id('whats').addEventListener('input', e=>{ e.target.value = onlyDigits(e.target.value).slice(0,11); updatePhoneHint(); });
+
+/* Botões do Wizard */
+id('btnNext1').addEventListener('click', ()=>{ if(validateStep1()) setStep(2); });
+id('btnPrev2').addEventListener('click', ()=> setStep(1));
+id('btnNext2').addEventListener('click', ()=>{ 
+  if(!validateStep2()) return;
+  const { total } = getNeededCompanions();
+  if(total > 0) { setStep(3); } else { setStep(4); }
+});
+id('btnPrev3').addEventListener('click', ()=> setStep(2));
+id('btnNext3').addEventListener('click', ()=>{ if(validateCompanions()) setStep(4); });
+id('btnPrev4').addEventListener('click', ()=>{
+  const { total } = getNeededCompanions();
+  if(total > 0) { setStep(3); } else { setStep(2); }
+});
+
+/* Botões de Pagamento */
+id('btnGerar').addEventListener('click', gerarQR);
+id('btnSaveQR').addEventListener('click', baixarQR);
+id('btnCopyPixCode').addEventListener('click', copiarCodigoPix);
+id('btnOpenBank').addEventListener('click', abrirBanco);
+id('btnPaid').addEventListener('click', confirmarPagamento);
+id('btnWhats').addEventListener('click', enviarWhats);
+
+/* ===== INICIALIZAÇÃO ===== */
+(async function init() {
+  toast('Carregando bilheteria...');
+  await fetchConfig(); // Busca as configs da nuvem
+  applyConfig(CONFIG); // Aplica as configs
+  resetPrices(); // Garante que os preços base sejam carregados
+  updatePhoneHint(); 
+  setStep(1);
+  createConfetti(); // Inicia a animação
+  toast('Pronto!');
+})();
+
+</script>
+</body>
+</html>
