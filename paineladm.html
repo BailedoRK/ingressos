@@ -332,16 +332,6 @@ h1{ letter-spacing:.5px }"></textarea>
 <div id="toast" class="toast"></div>
 
 <script>
-/* ===== Constantes / chaves ===== */
-const ADMIN_EMAIL='admbilheteria@gmail.com';
-const ADMIN_PASS='rkvidalouca1@';
-const ADMIN_FLAG='rk_admin_logged_v1';
-const TOTP_ENABLED='rk_totp_enabled';
-const TOTP_SECRET='rk_totp_secret_b32';
-const TOTP_ISSUER='Baile do RK';
-// REMOVIDO: const CFG_KEY='rk_site_cfg_v1'; 
-// REMOVIDO: const SALES_KEY = 'rk_bilhetes_vendas_v1'; 
-
 /* ===== Config Firebase (ATUALIZADO) ===== */
 const firebaseConfig = {
   apiKey: "AIzaSyDbblpUh93x0CUOquVCt_fqPjDoE8515Ao",
@@ -397,6 +387,14 @@ const DEFAULT_CFG = {
   ],
   customCSS:''
 };
+
+/* ===== Constantes / chaves (Login) ===== */
+const ADMIN_EMAIL='admbilheteria@gmail.com';
+const ADMIN_PASS='rkvidalouca1@';
+const ADMIN_FLAG='rk_admin_logged_v1';
+const TOTP_ENABLED='rk_totp_enabled';
+const TOTP_SECRET='rk_totp_secret_b32';
+const TOTP_ISSUER='Baile do RK';
 
 /* ===== Util ===== */
 const BRL = n => (n || 0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
@@ -495,8 +493,7 @@ async function clearSales() {
 }
 
 
-/* ===== 2FA helpers ===== */
-// (O código 2FA é local e não precisa mudar)
+/* ===== 2FA helpers (RE-ADICIONADO) ===== */
 const b32alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 function b32decodeToBytes(b32){ const s=(b32||"").toUpperCase().replace(/=+$/,'').replace(/\s+/g,''); let bits='',out=[]; for(const ch of s){ const v=b32alphabet.indexOf(ch); if(v<0) continue; bits += v.toString(2).padStart(5,'0'); } for(let i=0;i+8<=bits.length;i+=8){ out.push(parseInt(bits.slice(i,i+8),2)); } return new Uint8Array(out); }
 async function hmacSha1(keyBytes,msgBytes){ const k=await crypto.subtle.importKey('raw',keyBytes,{name:'HMAC',hash:'SHA-1'},false,['sign']); const sig=await crypto.subtle.sign('HMAC',k,msgBytes); return new Uint8Array(sig); }
@@ -505,11 +502,11 @@ async function totpNow(b32Secret,period=30,digits=6){ const key=b32decodeToBytes
 function randomBase32(len=32){ const b=new Uint8Array(len); crypto.getRandomValues(b); let out=''; for(const x of b){ out += b32alphabet[x%32]; } return out; }
 function otpauthURL(secret,label,issuer=TOTP_ISSUER){ return `otpauth://totp/${encodeURIComponent(label)}?secret=${secret}&issuer=${encodeURIComponent(issuer)}&algorithm=SHA1&digits=6&period=30`; }
 
-/* ===== Login ===== */
+/* ===== Login (RE-ADICIONADO E CORRIGIDO) ===== */
 function showLogin(){ 
   id('login').style.display='block'; 
   id('app').style.display='none'; 
-  // Binds de Login (MOVIMOS PARA CÁ)
+  // Binds de Login (LOCAL CORRETO)
   id('btnLogin').addEventListener('click', doLogin);
   id('btnVerify').addEventListener('click', verify2FA);
   id('btnConfirmSetup').addEventListener('click', confirmSetup2FA);
@@ -523,13 +520,58 @@ function showApp(){
   id('app').style.display='block'; 
 }
 
+function doLogin(){
+  const e=(id('email').value||'').trim().toLowerCase();
+  const p=id('pass').value||'';
+  id('errLogin').style.display='none';
+  if(e===ADMIN_EMAIL && p===ADMIN_PASS){
+    const enabled=localStorage.getItem(TOTP_ENABLED)==='1';
+    const secret=localStorage.getItem(TOTP_SECRET)||'';
+    if(enabled && secret){
+      id('twofa').style.display='block';
+      id('setup').style.display='none';
+    }else{
+      const sec = randomBase32(32);
+      localStorage.setItem(TOTP_SECRET, sec);
+      id('twofa').style.display='none';
+      id('setup').style.display='block';
+      const url=otpauthURL(sec, `${TOTP_ISSUER}:${ADMIN_EMAIL}`);
+      id('totpQR').innerHTML=''; new QRCode(id('totpQR'),{text:url,width:150,height:150,colorDark:'#000',colorLight:'#fff'});
+      id('totpSecret').textContent=sec;
+    }
+  }else{
+    id('errLogin').style.display='block';
+  }
+}
+async function verify2FA(){
+  const code=(id('totpCode').value||'').trim().padStart(6,'0');
+  const secret=localStorage.getItem(TOTP_SECRET)||'';
+  if(code.length!==6 || !secret){ id('err2').style.display='block'; return; }
+  const cur=await totpNow(secret); const prev=await totpNow(secret); const next=await totpNow(secret);
+  if([cur,prev,next].includes(code)){ localStorage.setItem(ADMIN_FLAG,'1'); enter(); }
+  else{ id('err2').style.display='block'; }
+}
+async function confirmSetup2FA(){
+  const code=(id('totpSetupCode').value||'').trim().padStart(6,'0');
+  const secret=localStorage.getItem(TOTP_SECRET)||'';
+  if(code.length!==6 || !secret){ id('errSetup').style.display='block'; return; }
+  const cur=await totpNow(secret); const prev=await totpNow(secret); const next=await totpNow(secret);
+  if([cur,prev,next].includes(code)){
+    localStorage.setItem(TOTP_ENABLED,'1');
+    id('errSetup').style.display='none'; id('okSetup').style.display='block';
+    setTimeout(()=>{ localStorage.setItem(ADMIN_FLAG,'1'); enter(); },600);
+  }else{ id('errSetup').style.display='block'; }
+}
+function copySecret(){ const s=localStorage.getItem(TOTP_SECRET)||''; if(!s) return; navigator.clipboard?.writeText(s).then(()=>toast('Segredo copiado!')); }
+function regenSecret(){ const s=randomBase32(32); localStorage.setItem(TOTP_SECRET,s); id('totpSecret').textContent=s; id('totpQR').innerHTML=''; new QRCode(id('totpQR'),{text:otpauthURL(s,`${TOTP_ISSUER}:${ADMIN_EMAIL}`),width:150,height:150,colorDark:'#000',colorLight:'#fff'}); toast('Novo segredo gerado.'); }
+
 async function enter(){ 
   showApp(); 
   await renderAll(); 
   toast('Login realizado.');
   checkConfig(); 
   
-  // Binds do App (MOVIMOS PARA CÁ)
+  // Binds do App (LOCAL CORRETO)
   id('btnLogout').addEventListener('click', logout);
   id('btnSaveAppearance').addEventListener('click', saveAppearance);
   id('btnSaveTexts').addEventListener('click', saveTexts);
@@ -993,7 +1035,7 @@ async function saveCss(){
 async function addCoupon(){
   const code=(id('cpCode').value||'').trim(); const m=Number(id('cpM').value||0); const f=Number(id('cpF').value||0);
   if(!code){ toast('Informe o código.'); return; }
-  if(m<=0 || f<=0){ toast('Preços do cupom devem ser > 0.'); return; }
+  if(m<=0 && f<=0){ toast('Preços do cupom devem ser > 0.'); return; }
   
   const cfg = { ...localConfig };
   cfg.coupons = (cfg.coupons||[]);
@@ -1090,9 +1132,9 @@ async function handleSalesTable(e) {
   }
 }
 
-/* Bootstrap */
+/* Bootstrap (INICIALIZAÇÃO CORRIGIDA) */
 (function init(){
-  // Binds de Login (MOVIMOS PARA CÁ)
+  // Adiciona os binds de login primeiro
   id('btnLogin').addEventListener('click', doLogin);
   id('btnVerify').addEventListener('click', verify2FA);
   id('btnConfirmSetup').addEventListener('click', confirmSetup2FA);
